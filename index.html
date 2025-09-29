@@ -1251,7 +1251,10 @@ function showResult() {
   .catch(err => {
     console.error("Greška:", err);
     document.getElementById("loading").style.display = "none";
-    const fallbackVerdict = results.fallback || "🌫 Zvijezde šute, ali ti znaš put.";
+    const fallbackVerdict = results.fallbacks
+  ? results.fallbacks[Math.floor(Math.random() * results.fallbacks.length)]
+  : results.fallback || "🌫 Zvijezde šute, ali ti znaš put.";
+
     const resultDiv = document.getElementById("result");
     resultDiv.style.display = "block";
     resultDiv.innerText = `🔮 Poetski rezultat: ${fallbackVerdict}`;
