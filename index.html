@@ -1270,33 +1270,57 @@ function showResult() {
   });
 }
 
-  // 📲 WhatsApp share
-  document.getElementById("whatsappShareBtn").onclick = () => {
-    const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-    const message = `Moj dominantni astrološki znak je: ${topSign}! Saznaj svoj znak na našem kvizu 🔮`;
-    const url = "https://www.lfbuyer.com/hr/zodijak/";
-    const whatsappLink = `https://wa.me/?text=${encodeURIComponent(message + " " + url)}`;
-    window.open(whatsappLink, "_blank");
-  };
+// 📲 WhatsApp share
+document.getElementById("whatsappShareBtn").onclick = () => {
+  const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const message = `Moj dominantni astrološki znak je: ${topSign}! Saznaj svoj znak na našem kvizu 🔮`;
+  const url = "https://www.lfbuyer.com/hr/zodijak/";
+  const whatsappLink = `https://wa.me/?text=${encodeURIComponent(message + " " + url)}`;
+  window.open(whatsappLink, "_blank");
+};
 
-  // 🔄 Restart logic
-  document.getElementById("restartBtn").onclick = () => {
-    selectedSigns = [];
-    initializeQuiz();
-    document.getElementById("result").style.display = "none";
-    document.getElementById("resultActions").style.display = "none";
-    document.getElementById("themeTitle").style.display = "block";
-    document.getElementById("question").style.display = "block";
-    document.getElementById("answers").style.display = "block";
-    document.getElementById("extraActions").style.display = "none";
-    showQuestion();
-  };
+// 🔄 Restart logic
+document.getElementById("restartBtn").onclick = () => {
+  selectedSigns = [];
+  initializeQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("resultActions").style.display = "none";
+  document.getElementById("themeTitle").style.display = "block";
+  document.getElementById("question").style.display = "block";
+  document.getElementById("answers").style.display = "block";
+  document.getElementById("extraActions").style.display = "none";
+  showQuestion();
+};
 
-  // 🚀 Start quiz
-  document.addEventListener("DOMContentLoaded", () => {
-    initializeQuiz();
+// 🚀 Start quiz
+document.addEventListener("DOMContentLoaded", () => {
+  // ✅ Load questions.json securely from Vercel
+  fetch("https://astro-api-omega.vercel.app/api/data?file=questions", {
+    headers: { "x-quiz-token": "samja-astro-2025" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const allQuizSets = { idealPartnerSet: data };
+    quizData = allQuizSets["idealPartnerSet"];
+    themeKeys = Object.keys(quizData);
+    shuffleArray(themeKeys);
+    themeKeys.forEach(theme => {
+      shuffleArray(quizData[theme]);
+      quizData[theme].forEach(q => shuffleArray(q.answers));
+    });
+    totalQuestions = themeKeys.reduce((sum, theme) => sum + quizData[theme].length, 0);
     showQuestion();
   });
+
+  // ✅ Load results.json securely from Vercel
+  fetch("https://astro-api-omega.vercel.app/api/data?file=results", {
+    headers: { "x-quiz-token": "samja-astro-2025" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    results = data;
+  });
+});
 </script>
 <!-- 
  Copyright(c) 2025 RIOGB j.d.o.o.
