@@ -1284,9 +1284,16 @@ document.getElementById("restartBtn").onclick = () => {
   showQuestion();
 };
 
+// 🔁 Shuffle utility — must be declared before use
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 // 🚀 Start quiz
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Load questions.json securely from Vercel
   fetch("https://astro-api-omega.vercel.app/api/data?file=questions", {
     headers: { "x-quiz-token": "samja-astro-2025" }
   })
@@ -1304,7 +1311,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showQuestion();
   });
 
-  // ✅ Load results.json securely from Vercel
   fetch("https://astro-api-omega.vercel.app/api/data?file=results", {
     headers: { "x-quiz-token": "samja-astro-2025" }
   })
