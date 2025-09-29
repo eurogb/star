@@ -275,22 +275,26 @@ box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
 
 <script>
 let selectedSigns = [];
-  
-  // 🔁 Shuffle utility
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
+let quizData;
+let themeKeys;
+let currentThemeIndex = 0;
+let currentQuestionIndex = 0;
+let scores = {};
+let totalQuestions = 0;
+let results = {}; // ✅ Declare results globally
 
-  // 🧠 State variables
-  let quizData;
-  let themeKeys;
-  let currentThemeIndex = 0;
-  let currentQuestionIndex = 0;
-  let scores = {};
-  let totalQuestions = 0;
+const tips = [/* your tips array remains unchanged */];
+
+const signDescriptions = { /* your zodiac descriptions remain unchanged */ };
+
+// 🔁 Shuffle utility
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 
   // 💡 Motivational tips
   const tips = [
@@ -1083,82 +1087,73 @@ astroPovezanostSet: {
   }
 };
 
-  // 🎲 Initialization logic
-  function initializeQuiz() {
-    const selectedSetKey = "idealPartnerSet";
-    quizData = allQuizSets[selectedSetKey];
+ // 🎲 Initialization logic
+function initializeQuiz() {
+  const selectedSetKey = "idealPartnerSet";
+  quizData = allQuizSets[selectedSetKey];
 
-    themeKeys = Object.keys(quizData);
-    shuffleArray(themeKeys);
+  themeKeys = Object.keys(quizData);
+  shuffleArray(themeKeys);
 
-    themeKeys.forEach(theme => {
-      shuffleArray(quizData[theme]);
-      quizData[theme].forEach(q => shuffleArray(q.answers));
-    });
+  themeKeys.forEach(theme => {
+    shuffleArray(quizData[theme]);
+    quizData[theme].forEach(q => shuffleArray(q.answers));
+  });
 
-    totalQuestions = themeKeys.reduce((sum, theme) => sum + quizData[theme].length, 0);
+  totalQuestions = themeKeys.reduce((sum, theme) => sum + quizData[theme].length, 0);
+  currentThemeIndex = 0;
+  currentQuestionIndex = 0;
+  scores = {};
+}
 
-    currentThemeIndex = 0;
+ // 🖼️ Render question
+function showQuestion() {
+  if (currentThemeIndex >= themeKeys.length) {
+    showResult();
+    return;
+  }
+
+  const theme = themeKeys[currentThemeIndex];
+  const questions = quizData[theme];
+
+  if (currentQuestionIndex >= questions.length) {
+    currentThemeIndex++;
     currentQuestionIndex = 0;
-    scores = {};
+    showQuestion();
+    return;
   }
 
-  // 🖼️ Render question
-  function showQuestion() {
-    if (currentThemeIndex >= themeKeys.length) {
-      showResult();
-      return;
-    }
+  const questionObj = questions[currentQuestionIndex];
 
-    const theme = themeKeys[currentThemeIndex];
-    const questions = quizData[theme];
+  let current = 0;
+  for (let i = 0; i < currentThemeIndex; i++) {
+    current += quizData[themeKeys[i]].length;
+  }
+  current += currentQuestionIndex + 1;
 
-    if (currentQuestionIndex >= questions.length) {
-      currentThemeIndex++;
-      currentQuestionIndex = 0;
+  let tipText = current === totalQuestions
+    ? tips[tips.length - 1]
+    : tips[Math.floor(Math.random() * (tips.length - 1))];
+
+  document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
+  document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
+  document.getElementById("question").innerText = questionObj.question;
+
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  questionObj.answers.forEach(answer => {
+    const btn = document.createElement("button");
+    btn.innerText = answer.text;
+    btn.onclick = () => {
+      selectedSigns.push(answer.sign);
+      scores[answer.sign] = (scores[answer.sign] || 0) + 1;
+      currentQuestionIndex++;
       showQuestion();
-      return;
-    }
-
-    const questionObj = questions[currentQuestionIndex];
-
-    // ✅ Calculate global progress
-    let current = 0;
-    for (let i = 0; i < currentThemeIndex; i++) {
-      current += quizData[themeKeys[i]].length;
-    }
-    current += currentQuestionIndex + 1;
-
-    // 💡 Select tip
-    let tipText;
-    if (current === totalQuestions) {
-      tipText = tips[tips.length - 1]; // WhatsApp tip
-    } else {
-      const randomIndex = Math.floor(Math.random() * (tips.length - 1));
-      tipText = tips[randomIndex];
-    }
-
-    // 🧾 Update UI
-    document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
-    document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
-    document.getElementById("question").innerText = questionObj.question;
-
-    const answersDiv = document.getElementById("answers");
-    answersDiv.innerHTML = "";
-
-    questionObj.answers.forEach(answer => {
-      const btn = document.createElement("button");
-      btn.innerText = answer.text;
-      btn.onclick = () => {
-  selectedSigns.push(answer.sign);
-  scores[answer.sign] = (scores[answer.sign] || 0) + 1;
-  currentQuestionIndex++;
-  showQuestion();
-};
-
-      answersDiv.appendChild(btn);
-    });
-  }
+    };
+    answersDiv.appendChild(btn);
+  });
+}
 
   // 🌌 Zodiac descriptions
 const signDescriptions = {
@@ -1236,18 +1231,14 @@ const signDescriptions = {
   }
 };
 
- // 🏁 Show result
- function showResult() {
-  // Hide quiz elements
+// 🏁 Show result
+function showResult() {
   document.getElementById("themeTitle").style.display = "none";
   document.getElementById("question").style.display = "none";
   document.getElementById("answers").style.display = "none";
-
-  // Show extra actions and loading spinner
   document.getElementById("extraActions").style.display = "block";
   document.getElementById("loading").style.display = "block";
 
-  // Send selected signs to backend
   fetch("https://astro-api-omega.vercel.app/api/evaluate", {
     method: "POST",
     headers: {
@@ -1259,36 +1250,25 @@ const signDescriptions = {
   })
   .then(res => res.json())
   .then(data => {
-    // Hide loading spinner
     document.getElementById("loading").style.display = "none";
-
-    // Get top sign from scores
     const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
     const resultDiv = document.getElementById("result");
     resultDiv.style.display = "block";
 
-    // Get sign description
     const { emoji, description, traits, connection } = signDescriptions[topSign];
-
-    // Display result
     resultDiv.innerText = `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\nTvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\nPrivlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n💘 Otkrij tko te čeka među zvijezdama!\n\n🔮 Poetski rezultat: ${data.verdict}`;
-
-    // Show result actions
     document.getElementById("resultActions").style.display = "flex";
   })
   .catch(err => {
     console.error("Greška:", err);
     document.getElementById("loading").style.display = "none";
-
     const fallbackVerdict = results.fallback || "🌫 Zvijezde šute, ali ti znaš put.";
     const resultDiv = document.getElementById("result");
     resultDiv.style.display = "block";
     resultDiv.innerText = `🔮 Poetski rezultat: ${fallbackVerdict}`;
-
     alert("Došlo je do problema s povezivanjem zvijezda.");
   });
 }
-
 
   // 📲 WhatsApp share
   document.getElementById("whatsappShareBtn").onclick = () => {
