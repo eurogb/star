@@ -283,7 +283,17 @@ let scores = {};
 let totalQuestions = 0;
 let results = {}; // ✅ Declare results globally
 
-const tips = [/* your tips array remains unchanged */];
+  // 💡 Motivational tips
+  const tips = [
+    "'Ponovno riješi kviz'- Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove      nijanse svog astrološkog profila!",
+    "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu",
+    "Oglasite svoju tvrtku besplatno na LFbuyer.com — svaki korisnik kviza može vas otkriti klikom na 'Oglasi'.",
+    "Jeste li znali da se pomoću 'home staginga' kuće i stanovi prodaju čak 75% brže i po 25% višoj cijeni? Više o ovoj učinkovitoj tehnici pripreme nekretnina za prodaju saznajte na blogu LFbuyer.com . ",
+    "Klikom na 'Posjeti LFbuyer.com' možete besplatno oglasiti svoje proizvode, usluge ili poslovanje — i učiniti ih vidljivima svima koji riješavaju ovaj kviz.",
+    "Jeste li znali da je  LFbuyer  skraćenica od  'Looking For a buyer' – tj. tražim kupca...",
+    "Kliknite na 'Lajkaj nas na  Facebooku', zatim 'Prati', kako biste ostali u kontaktu s nama.",
+    "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?" // ← final tip
+  ];
 
 const signDescriptions = { /* your zodiac descriptions remain unchanged */ };
 
@@ -296,17 +306,7 @@ function shuffleArray(array) {
 }
 
 
-  // 💡 Motivational tips
-  const tips = [
-    "'Ponovno riješi kviz'- Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove      nijanse svog astrološkog profila!",
-    "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu",
-    "Oglasite svoju tvrtku besplatno na LFbuyer.com — svaki korisnik kviza može vas otkriti klikom na 'Oglasi'.",
-    "Jeste li znali da se pomoću 'home staginga' kuće i stanovi prodaju čak 75% brže i po 25% višoj cijeni? Više o ovoj učinkovitoj tehnici pripreme nekretnina za prodaju saznajte na blogu LFbuyer.com . ",
-    "Klikom na 'Posjeti LFbuyer.com' možete besplatno oglasiti svoje proizvode, usluge ili poslovanje — i učiniti ih vidljivima svima koji riješavaju ovaj kviz.",
-    "Jeste li znali da je  LFbuyer  skraćenica od  'Looking For a buyer' – tj. tražim kupca...",
-    "Kliknite na 'Lajkaj nas na  Facebooku', zatim 'Prati', kako biste ostali u kontaktu s nama.",
-    "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?" // ← final tip
-  ];
+
 
   // 📦 Quiz data — insert your full allQuizSets object here
   const allQuizSets = {
