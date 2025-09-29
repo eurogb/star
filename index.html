@@ -273,6 +273,8 @@ box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
 
 
 <script>
+let selectedSigns = [];
+  
   // 🔁 Shuffle utility
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -1147,10 +1149,12 @@ astroPovezanostSet: {
       const btn = document.createElement("button");
       btn.innerText = answer.text;
       btn.onclick = () => {
-        scores[answer.sign] = (scores[answer.sign] || 0) + 1;
-        currentQuestionIndex++;
-        showQuestion();
-      };
+  selectedSigns.push(answer.sign);
+  scores[answer.sign] = (scores[answer.sign] || 0) + 1;
+  currentQuestionIndex++;
+  showQuestion();
+};
+
       answersDiv.appendChild(btn);
     });
   }
@@ -1231,22 +1235,35 @@ const signDescriptions = {
   }
 };
 
-
-// 🏁 Show result
+ // 🏁 Show result
   function showResult() {
     document.getElementById("themeTitle").style.display = "none";
     document.getElementById("question").style.display = "none";
     document.getElementById("answers").style.display = "none";
     document.getElementById("extraActions").style.display = "block";
 
-    const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-    const resultDiv = document.getElementById("result");
-    resultDiv.style.display = "block";
+    fetch("https://astro-api.vercel.app/api/evaluate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(selectedSigns)
+    })
+    .then(res => res.json())
+    .then(data => {
+      const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+      const resultDiv = document.getElementById("result");
+      resultDiv.style.display = "block";
 
-    const { emoji, description, traits, connection } = signDescriptions[topSign];
-    resultDiv.innerText = `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\nTvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\nPrivlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n💘 Otkrij tko te čeka među zvijezdama!`;
+      const { emoji, description, traits, connection } = signDescriptions[topSign];
+      resultDiv.innerText = `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\nTvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\nPrivlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n💘 Otkrij tko te čeka među zvijezdama!\n\n🔮 Poetski rezultat: ${data.verdict}`;
 
-    document.getElementById("resultActions").style.display = "flex";
+      document.getElementById("resultActions").style.display = "flex";
+    })
+    .catch(err => {
+      console.error("Greška:", err);
+      alert("Došlo je do problema s povezivanjem zvijezda.");
+    });
   }
 
   // 📲 WhatsApp share
@@ -1260,6 +1277,7 @@ const signDescriptions = {
 
   // 🔄 Restart logic
   document.getElementById("restartBtn").onclick = () => {
+    selectedSigns = [];
     initializeQuiz();
     document.getElementById("result").style.display = "none";
     document.getElementById("resultActions").style.display = "none";
