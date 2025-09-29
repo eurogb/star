@@ -295,7 +295,82 @@ let results = {}; // ✅ Declare results globally
     "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?" // ← final tip
   ];
 
-const signDescriptions = { /* your zodiac descriptions remain unchanged */ };
+// 🌌 Zodiac descriptions
+const signDescriptions = {
+  Ovan: {
+    emoji: "🔥",
+    description: "strastven, energičan i pun inicijative",
+    traits: "odvažnosti, direktnosti i neovisnosti",
+    connection: "motivira te da riskiraš i slijediš srce"
+  },
+  Bik: {
+    emoji: "🌿",
+    description: "stabilan, senzualan i pouzdan",
+    traits: "nježnosti, lojalnosti i osjećaja za užitak",
+    connection: "smiruje tvoju dušu i pruža sigurnost"
+  },
+  Blizanci: {
+    emoji: "💬",
+    description: "duhovit, znatiželjan i komunikativan",
+    traits: "mentalne stimulacije, spontanosti i zabave",
+    connection: "drži tvoj um budnim i srce razigranim"
+  },
+  Rak: {
+    emoji: "🫶",
+    description: "emotivan, brižan i intuitivan",
+    traits: "topline, nježnosti i duboke povezanosti",
+    connection: "stvara prostor gdje se osjećaš voljeno i sigurno"
+  },
+  Lav: {
+    emoji: "🦁",
+    description: "samopouzdan, karizmatičan i velikodušan",
+    traits: "izražajnosti, strasti i kraljevske energije",
+    connection: "čini da se osjećaš posebno i obožavano"
+  },
+  Djevica: {
+    emoji: "🧠",
+    description: "analitičan, pažljiv i pouzdan",
+    traits: "preciznosti, brige i praktične podrške",
+    connection: "donosi red u tvoje emocije i pomaže ti da rasteš"
+  },
+  Vaga: {
+    emoji: "⚖️",
+    description: "šarmantan, diplomatski i estetski osviješten",
+    traits: "ravnoteže, elegancije i emocionalne harmonije",
+    connection: "uspostavlja sklad i njeguje tvoju nježnu stranu"
+  },
+  Škorpion: {
+    emoji: "🦂",
+    description: "intenzivan, misteriozan i duboko emotivan",
+    traits: "strasti, dubine i magnetične privlačnosti",
+    connection: "izaziva te da se otvoriš i osjetiš bez zadrške"
+  },
+  Strijelac: {
+    emoji: "🏹",
+    description: "optimističan, avanturistički i iskren",
+    traits: "slobode, iskrenosti i filozofske širine",
+    connection: "širi tvoje horizonte i potiče tvoju znatiželju"
+  },
+  Jarac: {
+    emoji: "⛰️",
+    description: "ambiciozan, stabilan i odgovoran",
+    traits: "discipline, pouzdanosti i dugoročnog razmišljanja",
+    connection: "gradi s tobom temelje za trajnu vezu"
+  },
+  Vodenjak: {
+    emoji: "🔮",
+    description: "inovativan, neovisan i vizionarski",
+    traits: "mentalne slobode, originalnosti i humanosti",
+    connection: "inspirira tvoju maštu i poštuje tvoju individualnost"
+  },
+  Ribe: {
+    emoji: "🌊",
+    description: "romantičan, intuitivan i duhovan",
+    traits: "empatije, snova i nježnosti",
+    connection: "povezuje se s tvojom dušom i razumije tvoje emocije"
+  }
+};
+
 
 // 🔁 Shuffle utility
 function shuffleArray(array) {
