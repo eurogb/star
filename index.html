@@ -320,36 +320,23 @@ function getNextFallback() {
   return fallbackPool.pop();
 }
 
-// 🎨 Render result
-function renderResult(poeticVerdict) {
-  document.getElementById("loading").style.display = "none";
-  const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-  const { emoji, description, traits, connection } = signDescriptions[topSign];
-  const resultDiv = document.getElementById("result");
-  resultDiv.style.display = "block";
-  resultDiv.innerText =
-    `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
-    `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
-    `Privlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n` +
-    `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
-    `🔮 Poetski rezultat: ${poeticVerdict}`;
-  document.getElementById("resultActions").style.display = "flex";
-}
-
 // 🎲 Initialize quiz
 function initializeQuiz() {
   quizData = allQuizSets[selectedSetKey];
-  themeKeys = Object.keys(quizData);
-  shuffleArray(themeKeys);
+  themeKeys = shuffleArray(Object.keys(quizData));
 
   themeKeys.forEach(subtheme => {
     const arr = quizData[subtheme];
-    if (!Array.isArray(arr)) return console.warn(`Skipping non-array subtheme: ${subtheme}`);
+    if (!Array.isArray(arr)) return;
     shuffleArray(arr);
     arr.forEach(q => shuffleArray(q.answers));
   });
 
-  totalQuestions = themeKeys.reduce((sum, t) => sum + (Array.isArray(quizData[t]) ? quizData[t].length : 0), 0);
+  totalQuestions = themeKeys.reduce(
+    (sum, t) => sum + (Array.isArray(quizData[t]) ? quizData[t].length : 0),
+    0
+  );
+
   currentThemeIndex = 0;
   currentQuestionIndex = 0;
   scores = {};
@@ -358,6 +345,7 @@ function initializeQuiz() {
   document.getElementById("result").style.display = "none";
   document.getElementById("resultActions").style.display = "none";
   document.getElementById("extraActions").style.display = "none";
+  document.getElementById("loading").style.display = "none";
   document.getElementById("themeTitle").style.display = "block";
   document.getElementById("question").style.display = "block";
   document.getElementById("answers").style.display = "block";
@@ -371,12 +359,11 @@ function showQuestion() {
 
   const theme = themeKeys[currentThemeIndex];
   const questions = quizData[theme];
-  if (!Array.isArray(questions)) {
+  if (!Array.isArray(questions) || questions.length === 0) {
     currentThemeIndex++;
     currentQuestionIndex = 0;
     return showQuestion();
   }
-
   if (currentQuestionIndex >= questions.length) {
     currentThemeIndex++;
     currentQuestionIndex = 0;
@@ -384,16 +371,18 @@ function showQuestion() {
   }
 
   const qObj = questions[currentQuestionIndex];
-  let current = themeKeys
+  let currentCount = themeKeys
     .slice(0, currentThemeIndex)
-    .reduce((sum, t) => sum + quizData[t].length, 0)
-    + currentQuestionIndex + 1;
+    .reduce((s, t) => s + quizData[t].length, 0) + currentQuestionIndex + 1;
 
-  const tipText = current === totalQuestions
-    ? tips[tips.length - 1]
-    : tips[Math.floor(Math.random() * (tips.length - 1))];
+  const tipText =
+    currentCount === totalQuestions
+      ? tips[tips.length - 1]
+      : tips[Math.floor(Math.random() * (tips.length - 1))];
 
-  document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
+  document.getElementById(
+    "progressBox"
+  ).innerText = `🔢 ${currentCount}/${totalQuestions} — 💡 TIP: ${tipText}`;
   document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
   document.getElementById("question").innerText = qObj.question;
 
@@ -428,48 +417,63 @@ function showResult() {
     },
     body: JSON.stringify(selectedSigns)
   })
-  .then(res => res.json())
-  .then(data => {
-    const verdict = typeof data.verdict === "string" && data.verdict.trim()
-      ? data.verdict
-      : getNextFallback();
-    renderResult(verdict);
-  })
-  .catch(() => {
-    const verdict = getNextFallback();
-    renderResult(verdict);
-    alert("Došlo je do problema s povezivanjem zvijezda.");
-  });
+    .then(res => res.json())
+    .then(data => {
+      const verdict =
+        typeof data.verdict === "string" && data.verdict.trim()
+          ? data.verdict
+          : getNextFallback();
+      renderResult(verdict);
+    })
+    .catch(err => {
+      console.error("Greška:", err);
+      renderResult(getNextFallback());
+      alert("Došlo je do problema s povezivanjem zvijezda.");
+    });
+}
+
+// 🎨 Render result
+function renderResult(poeticVerdict) {
+  document.getElementById("loading").style.display = "none";
+  const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const { emoji, description, traits, connection } = signDescriptions[topSign];
+  const resultDiv = document.getElementById("result");
+  resultDiv.style.display = "block";
+  resultDiv.innerText =
+    `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
+    `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
+    `Privlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n` +
+    `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
+    `🔮 Poetski rezultat: ${poeticVerdict}`;
+  document.getElementById("resultActions").style.display = "flex";
 }
 
 // 🌌 Zodiac descriptions
 const signDescriptions = {
-  Ovan:      { emoji: "🔥", description: "strastven, energičan i pun inicijative", traits: "odvažnosti, direktnosti i neovisnosti", connection: "motivira te da riskiraš i slijediš srce" },
-  Bik:       { emoji: "🌿", description: "stabilan, senzualan i pouzdan", traits: "nježnosti, lojalnosti i osjećaja za užitak", connection: "smiruje tvoju dušu i pruža sigurnost" },
-  Blizanci:  { emoji: "💬", description: "duhovit, znatiželjan i komunikativan", traits: "mentalne stimulacije, spontanosti i zabave", connection: "drži tvoj um budnim i srce razigranim" },
-  Rak:       { emoji: "🫶", description: "emotivan, brižan i intuitivan", traits: "topline, nježnosti i duboke povezanosti", connection: "stvara prostor gdje se osjećaš voljeno i sigurno" },
-  Lav:       { emoji: "🦁", description: "samopouzdan, karizmatičan i velikodušan", traits: "izražajnosti, strasti i kraljevske energije", connection: "čini da se osjećaš posebno i obožavano" },
-  Djevica:   { emoji: "🧠", description: "analitičan, pažljiv i pouzdan", traits: "preciznosti, brige i praktične podrške", connection: "donosi red u tvoje emocije i pomaže ti da rasteš" },
-  Vaga:      { emoji: "⚖️", description: "šarmantan, diplomatski i estetski osviješten", traits: "ravnoteže, elegancije i emocionalne harmonije", connection: "uspostavlja sklad i njeguje tvoju nježnu stranu" },
-  Škorpion:  { emoji: "🦂", description: "intenzivan, misteriozan i duboko emotivan", traits: "strasti, dubine i magnetične privlačnosti", connection: "izaziva te da se otvoriš i osjetiš bez zadrške" },
-  Strijelac: { emoji: "🏹", description: "optimističan, avanturistički i iskren", traits: "slobode, iskrenosti i filozofske širine", connection: "širi tvoje horizonte i potiče tvoju znatiželju" },
-  Jarac:     { emoji: "⛰️", description: "ambiciozan, stabilan i odgovoran", traits: "discipline, pouzdanosti i dugoročnog razmišljanja", connection: "gradi s tobom temelje za trajnu vezu" },
-  Vodenjak:  { emoji: "🔮", description: "inovativan, neovisan i vizionarski", traits: "mentalne slobode, originalnosti i humanosti", connection: "inspirira tvoju maštu i poštuje tvoju individualnost" },
-  Ribe:      { emoji: "🌊", description: "romantičan, intuitivan i duhovan", traits: "empatije, snova i nježnosti", connection: "povezuje se s tvojom dušom i razumije tvoje emocije" }
+  Ovan:      { emoji:"🔥", description:"strastven, energičan i pun inicijative", traits:"odvažnosti, direktnosti i neovisnosti", connection:"motivira te da riskiraš i slijediš srce" },
+  Bik:       { emoji:"🌿", description:"stabilan, senzualan i pouzdan", traits:"nježnosti, lojalnosti i osjećaja za užitak", connection:"smiruje tvoju dušu i pruža sigurnost" },
+  Blizanci:  { emoji:"💬", description:"duhovit, znatiželjan i komunikativan", traits:"mentalne stimulacije, spontanosti i zabave", connection:"drži tvoj um budnim i srce razigranim" },
+  Rak:       { emoji:"🫶", description:"emotivan, brižan i intuitivan", traits:"topline, nježnosti i duboke povezanosti", connection:"stvara prostor gdje se osjećaš voljeno i sigurno" },
+  Lav:       { emoji:"🦁", description:"samopouzdan, karizmatičan i velikodušan", traits:"izražajnosti, strasti i kraljevske energije", connection:"čini da se osjećaš posebno i obožavano" },
+  Djevica:   { emoji:"🧠", description:"analitičan, pažljiv i pouzdan", traits:"preciznosti, brige i praktične podrške", connection:"donosi red u tvoje emocije i pomaže ti da rasteš" },
+  Vaga:      { emoji:"⚖️", description:"šarmantan, diplomatski i estetski osviješten", traits:"ravnoteže, elegancije i emocionalne harmonije", connection:"uspostavlja sklad i njeguje tvoju nježnu stranu" },
+  Škorpion:  { emoji:"🦂", description:"intenzivan, misteriozan i duboko emotivan", traits:"strasti, dubine i magnetične privlačnosti", connection:"izaziva te da se otvoriš i osjetiš bez zadrške" },
+  Strijelac: { emoji:"🏹", description:"optimističan, avanturistički i iskren", traits:"slobode, iskrenosti i filozofske širine", connection:"širi tvoje horizonte i potiče tvoju znatiželju" },
+  Jarac:     { emoji:"⛰️", description:"ambiciozan, stabilan i odgovoran", traits:"discipline, pouzdanosti i dugoročnog razmišljanja", connection:"gradi s tobom temelje za trajnu vezu" },
+  Vodenjak:  { emoji:"🔮", description:"inovativan, neovisan i vizionarski", traits:"mentalne slobode, originalnosti i humanosti", connection:"inspirira tvoju maštu i poštuje tvoju individualnost" },
+  Ribe:      { emoji:"🌊", description:"romantičan, intuitivan i duhovan", traits:"empatije, snova i nježnosti", connection:"povezuje se s tvojom dušom i razumije tvoje emocije" }
 };
 
 // 📲 WhatsApp share
 document.getElementById("whatsappShareBtn").onclick = () => {
-  const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const topSign = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
   const message = `Moj dominantni astrološki znak je: ${topSign}! Saznaj svoj znak na našem kvizu 🔮`;
   const url = "https://www.lfbuyer.com/hr/zodijak/";
   window.open(`https://wa.me/?text=${encodeURIComponent(message + " " + url)}`, "_blank");
 };
 
 // 🔄 Restart logic
-document.getElementById("restartBtn").onclick = () => {
-  initializeQuiz();
-};
+document.getElementById("restartBtn").onclick = initializeQuiz;
 
 // 🚀 Start quiz & load data
 document.addEventListener("DOMContentLoaded", () => {
@@ -488,6 +492,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
+
 <!-- 
  Copyright(c) 2025 RIOGB j.d.o.o.
   Sva prava pridržana.
