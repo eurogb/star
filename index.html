@@ -311,26 +311,27 @@ quizData = allQuizSets;
 
 // 🎲 Initialization logic
 function initializeQuiz() {
-  const selectedSetKey = "idealPartnerSet"; // 🔑 Choose your active set
-  quizData = allQuizSets[selectedSetKey];
+ const selectedSetKey = "idealPartnerSet";
+quizData = allQuizSets[selectedSetKey];
 
-  themeKeys = Object.keys(quizData);
-  shuffleArray(themeKeys);
+themeKeys = Object.keys(quizData);
+shuffleArray(themeKeys);
 
-  themeKeys.forEach(theme => {
-    const themeData = quizData[theme];
-    if (!Array.isArray(themeData)) {
-      console.warn(`Skipping non-array theme: ${theme}`, themeData);
-      return;
-    }
-    shuffleArray(themeData);
-    themeData.forEach(q => shuffleArray(q.answers));
-  });
+themeKeys.forEach(subtheme => {
+  const questionsArray = quizData[subtheme];
+  if (!Array.isArray(questionsArray)) {
+    console.warn(`Skipping non-array subtheme: ${subtheme}`, questionsArray);
+    return;
+  }
+  shuffleArray(questionsArray);
+  questionsArray.forEach(q => shuffleArray(q.answers));
+});
 
-  totalQuestions = themeKeys.reduce((sum, theme) => {
-    const themeData = quizData[theme];
-    return Array.isArray(themeData) ? sum + themeData.length : sum;
-  }, 0);
+totalQuestions = themeKeys.reduce((sum, subtheme) => {
+  const questionsArray = quizData[subtheme];
+  return Array.isArray(questionsArray) ? sum + questionsArray.length : sum;
+}, 0);
+
 
   currentThemeIndex = 0;
   currentQuestionIndex = 0;
