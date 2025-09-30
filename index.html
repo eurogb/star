@@ -274,16 +274,19 @@ box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
 
 
 <script>
-let selectedSigns = [];
-let quizData;
-let themeKeys;
+// 🌌 Global declarations
+let allQuizSets = {};
+let quizData = {};
+let themeKeys = [];
+let totalQuestions = 0;
 let currentThemeIndex = 0;
 let currentQuestionIndex = 0;
 let scores = {};
-let totalQuestions = 0;
-let results = {}; // ✅ Declare results globally
+let results = {};
+const selectedSigns = [];
+const selectedSetKey = "idealPartnerSet";
 
-  // 💡 Motivational tips
+// 💡 Motivational tips
   const tips = [
     "'Ponovno riješi kviz'- Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove      nijanse svog astrološkog profila!",
     "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu",
@@ -295,50 +298,49 @@ let results = {}; // ✅ Declare results globally
     "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?" // ← final tip
   ];
 
-
-
-
-  // 📦 Quiz data — insert your full allQuizSets object here
- fetch("./questions.json")
-  .then(res => res.json())
-  .then(data => {
-const allQuizSets = data;
-quizData = allQuizSets;
-
-    // continue...
-  });
-
+// 🔁 Shuffle utility
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 // 🎲 Initialization logic
 function initializeQuiz() {
-const selectedSetKey = "idealPartnerSet";
-quizData = allQuizSets[selectedSetKey];
+  quizData = allQuizSets[selectedSetKey];
+  themeKeys = Object.keys(quizData);
+  shuffleArray(themeKeys);
 
-themeKeys = Object.keys(quizData);
-shuffleArray(themeKeys);
+  themeKeys.forEach(subtheme => {
+    const questionsArray = quizData[subtheme];
+    if (!Array.isArray(questionsArray)) {
+      console.warn(`Skipping non-array subtheme: ${subtheme}`, questionsArray);
+      return;
+    }
+    shuffleArray(questionsArray);
+    questionsArray.forEach(q => shuffleArray(q.answers));
+  });
 
-themeKeys.forEach(subtheme => {
-  const questionsArray = quizData[subtheme];
-  if (!Array.isArray(questionsArray)) {
-    console.warn(`Skipping non-array subtheme: ${subtheme}`, questionsArray);
-    return;
-  }
-  shuffleArray(questionsArray);
-  questionsArray.forEach(q => shuffleArray(q.answers));
-});
-
-
-totalQuestions = themeKeys.reduce((sum, subtheme) => {
-  const questionsArray = quizData[subtheme];
-  return Array.isArray(questionsArray) ? sum + questionsArray.length : sum;
-}, 0);
-
+  totalQuestions = themeKeys.reduce((sum, subtheme) => {
+    const questionsArray = quizData[subtheme];
+    return Array.isArray(questionsArray) ? sum + questionsArray.length : sum;
+  }, 0);
 
   currentThemeIndex = 0;
   currentQuestionIndex = 0;
   scores = {};
-}
+  selectedSigns.length = 0;
 
+  document.getElementById("result").style.display = "none";
+  document.getElementById("resultActions").style.display = "none";
+  document.getElementById("themeTitle").style.display = "block";
+  document.getElementById("question").style.display = "block";
+  document.getElementById("answers").style.display = "block";
+  document.getElementById("extraActions").style.display = "none";
+
+  showQuestion();
+}
 
 // 🖼️ Render question
 function showQuestion() {
@@ -367,19 +369,16 @@ function showQuestion() {
 
   const questionObj = questions[currentQuestionIndex];
 
-  // 🧮 Progress calculation
   let current = 0;
   for (let i = 0; i < currentThemeIndex; i++) {
     current += quizData[themeKeys[i]].length;
   }
   current += currentQuestionIndex + 1;
 
-  // 💡 Tip logic
   const tipText = current === totalQuestions
     ? tips[tips.length - 1]
     : tips[Math.floor(Math.random() * (tips.length - 1))];
 
-  // 🖼️ Render UI
   document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
   document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
   document.getElementById("question").innerText = questionObj.question;
@@ -400,7 +399,7 @@ function showQuestion() {
   });
 }
 
-  // 🌌 Zodiac descriptions
+// 🌌 Zodiac descriptions
 const signDescriptions = {
   Ovan: {
     emoji: "🔥",
@@ -476,6 +475,7 @@ const signDescriptions = {
   }
 };
 
+
 // 🏁 Show result
 function showResult() {
   document.getElementById("themeTitle").style.display = "none";
@@ -508,8 +508,8 @@ function showResult() {
     console.error("Greška:", err);
     document.getElementById("loading").style.display = "none";
     const fallbackVerdict = results.fallbacks
-  ? results.fallbacks[Math.floor(Math.random() * results.fallbacks.length)]
-  : results.fallback || "🌫 Zvijezde šute, ali ti znaš put.";
+      ? results.fallbacks[Math.floor(Math.random() * results.fallbacks.length)]
+      : "🌫 Zvijezde šute, ali ti znaš put.";
 
     const resultDiv = document.getElementById("result");
     resultDiv.style.display = "block";
@@ -529,70 +529,24 @@ document.getElementById("whatsappShareBtn").onclick = () => {
 
 // 🔄 Restart logic
 document.getElementById("restartBtn").onclick = () => {
-  selectedSigns = [];
   initializeQuiz();
-  document.getElementById("result").style.display = "none";
-  document.getElementById("resultActions").style.display = "none";
-  document.getElementById("themeTitle").style.display = "block";
-  document.getElementById("question").style.display = "block";
-  document.getElementById("answers").style.display = "block";
-  document.getElementById("extraActions").style.display = "none";
-  showQuestion();
 };
 
-// 🔁 Shuffle utility — must be declared before use
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
+// 🚀 Start quiz
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("./questions.json")
+    .then(res => res.json())
+    .then(data => {
+      allQuizSets = data;
+      initializeQuiz();
+    });
 
- // 🚀 Start quiz
-  document.addEventListener("DOMContentLoaded", () => {
-    // Load your quiz questions
-    fetch("./questions.json")
-      .then(res => res.json())
-      .then(data => {
-        // `data` already is { idealPartnerSet: { … }, astroFantazijaSet: { … }, … }
-        const selectedSetKey = "idealPartnerSet";
-        quizData = data[selectedSetKey];       // now an object whose values are arrays
-
-        // Build and shuffle the list of sub-themes
-        themeKeys = Object.keys(quizData);
-        shuffleArray(themeKeys);
-
-        // For each subtheme, shuffle its questions and their answers
-        themeKeys.forEach(theme => {
-          const questions = quizData[theme];
-          if (!Array.isArray(questions)) {
-            console.warn(`Skipping non-array theme: ${theme}`, questions);
-            return;
-          }
-          shuffleArray(questions);
-          questions.forEach(q => shuffleArray(q.answers));
-        });
-
-        // Count total questions
-        totalQuestions = themeKeys.reduce((sum, theme) => {
-          const arr = quizData[theme];
-          return Array.isArray(arr) ? sum + arr.length : sum;
-        }, 0);
-
-        // Initialize pointers & scores, then show first question
-        currentThemeIndex = 0;
-        currentQuestionIndex = 0;
-        scores = {};
-        showQuestion();
-      });
-
-    // Load your results/interpretations
-    fetch("./results.json")
-      .then(res => res.json())
-      .then(data => {
-        results = data;
-      });
-  });
+  fetch("./results.json")
+    .then(res => res.json())
+    .then(data => {
+      results = data;
+    });
+});
 </script>
 <!-- 
  Copyright(c) 2025 RIOGB j.d.o.o.
