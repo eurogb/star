@@ -1,5 +1,280 @@
-i going to uplod you my script in two messeges. Please when younhave completed ,script. Fix it . The problem is Poetic verdict is all the time same,
-after the script is fixed please renurn me bac clean.
+
+
+
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Astro Kviz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+body {
+  background: linear-gradient(to right, #1e1e2f, #2c2c3e);
+  color: #f0f0f5;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 40px;
+  margin: 0;
+}
+
+h2 {
+  font-size: 2em;
+  color: #ffd700;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 5px #000;
+}
+
+#quiz {
+  max-width: 60vw; /* or try 100% */
+  margin: 0 auto;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#themeTitle {
+  font-size: 1.3em;
+  color: #87cefa;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+#progressBox {
+  margin: 20px auto;
+  padding: 15px 20px;
+  max-width: 600px;
+  font-size: 1.1em;
+  color: #f0f0f5;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+#question {
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  color: #f0f0f5;
+}
+
+#answers button {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 14px 24px;
+  font-size: 1.2em;
+  border-radius: 8px;
+  border: none;
+  background-color: #ffd700;
+  color: #1e1e2f;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+#answers button:hover {
+  background-color: #ffcc00;
+}
+
+#result {
+  font-size: 1.5em;
+  color: #ffd700;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+#restartBtn,
+#partnerBtn {
+  margin-top: 20px;
+  padding: 12px 24px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  border: none;
+  background-color: #ffd700;
+  color: #1e1e2f;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#restartBtn:hover,
+#partnerBtn:hover {
+  background-color: #ffcc00;
+}
+
+
+/* 🎯 WhatsApp button style */
+#extraActions #whatsappShareBtn {
+  background-color: #25D366 !important;
+  color: #fff;
+  font-size: 1.0em;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+#extraActions #whatsappShareBtn:hover {
+  background-color: #1ebe5d !important;
+}
+
+#extraActions button {
+  background-color: #f5f5f5;
+  color: #1e1e2f;
+  font-weight: normal; /* removed bold */
+  font-size: 1.0em;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin: 10px 0;
+  transition: background-color 0.3s ease;
+}
+
+#extraActions button:hover {
+  background-color: #ffe680; /* soft warm yellow */
+}
+
+
+
+
+/* 🎯 WhatsApp button style */
+#whatsappShareBtn {
+  background-color: #25D366; /* WhatsApp green */
+  color: #fff;
+  font-size: 1.1em;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+#whatsappShareBtn:hover {
+  background-color: #1ebe5d; /* darker green on hover */
+}
+
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  background-color: #ffd700;
+  color: #1e1e2f;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #ffcc00;
+}
+
+/* 📱 Mobile adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 1.6em;
+  }
+  
+  #quiz {
+    max-width: 100vw;
+    padding: 15px;
+  }
+  
+  #question {
+    font-size: 1.2em;
+  }
+
+  #answers button {
+    font-size: 1.1em;
+    padding: 12px 20px;
+  }
+
+  #result {
+    font-size: 1.3em;
+    padding: 15px;
+  }
+
+  #restartBtn,
+  #partnerBtn,
+  #extraActions button {
+    width: 100%;
+    font-size: 1em;
+  }
+}
+</style>
+
+</head>
+<body>
+
+<div id="quiz">
+  <h2 style="text-align:center;">Vaš Idealan Partner</h2>
+
+  <!-- 🟨 Ad: Top of quiz -->
+  <div class="ezoic-ad" id="ezoic-pub-ad-1"></div>
+
+  <!-- 🧭 Quiz content -->
+  <div id="themeTitle"></div>
+  <div id="progressBox"></div>
+  <div id="question"></div>
+  <div id="answers"></div>
+
+  <!-- 🟨 Ad: Between questions and result -->
+  <div class="ezoic-ad" id="ezoic-pub-ad-2"></div>
+<div id="loading" style="display:none;">🔄 Učitavanje rezultata...</div>
+
+  <!-- 🎯 Result -->
+  <div id="result" style="display:none;"></div>
+
+  <!-- 🔁 Result actions -->
+  <div class="button-row" style="display:none;" id="resultActions">
+    <button id="restartBtn">🔄 Ponovno riješi kviz</button>
+    <a href="https://www.lfbuyer.com/hr/listing/postati-uspje%C5%A1an-influencer-na-dru%C5%A1tvenim-mre%C5%BEama/"
+       target="_blank"
+       id="partnerBtn"
+       class="action-btn">💘 Oglasi</a>
+  </div>
+
+  <!-- 🟨 Ad: Before extra actions -->
+  <div class="ezoic-ad" id="ezoic-pub-ad-3"></div>
+
+  <!-- 🌐 Extra actions -->
+  <div id="extraActions" style="margin-top: 30px;">
+    <a href="https://www.lfbuyer.com/zodiac/" target="_blank">
+      <button>🌐 Posjeti LFbuyer.com</button>
+    </a>
+    <a href="https://www.facebook.com/rio.lfbuyer/" target="_blank">
+      <button>👍 Lajkaj nas na Facebooku</button>
+    </a>
+    <button id="whatsappShareBtn" style="margin-top: 10px;">
+      📲 Proslijedi Kviz i Rezultat Putem WhatsAppa
+    </button>
+  </div>
+
+  <!-- 🟨 Ad: Bottom of quiz -->
+  <div class="ezoic-ad" id="ezoic-pub-ad-4"></div>
+</div>
+
+
 <script>
 // 🌌 Global declarations
 let allQuizSets = {};
@@ -10,20 +285,21 @@ let currentThemeIndex = 0;
 let currentQuestionIndex = 0;
 let scores = {};
 let results = {};
+let fallbackPool = [];
 const selectedSigns = [];
 const selectedSetKey = "idealPartnerSet";
 
 // 💡 Motivational tips
-  const tips = [
-    "'Ponovno riješi kviz'- Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove      nijanse svog astrološkog profila!",
-    "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu",
-    "Oglasite svoju tvrtku besplatno na LFbuyer.com — svaki korisnik kviza može vas otkriti klikom na 'Oglasi'.",
-    "Jeste li znali da se pomoću 'home staginga' kuće i stanovi prodaju čak 75% brže i po 25% višoj cijeni? Više o ovoj učinkovitoj tehnici pripreme nekretnina za prodaju saznajte na blogu LFbuyer.com . ",
-    "Klikom na 'Posjeti LFbuyer.com' možete besplatno oglasiti svoje proizvode, usluge ili poslovanje — i učiniti ih vidljivima svima koji riješavaju ovaj kviz.",
-    "Jeste li znali da je  LFbuyer  skraćenica od  'Looking For a buyer' – tj. tražim kupca...",
-    "Kliknite na 'Lajkaj nas na  Facebooku', zatim 'Prati', kako biste ostali u kontaktu s nama.",
-    "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?" // ← final tip
-  ];
+const tips = [
+  "'Ponovno riješi kviz' - Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove nijanse svog astrološkog profila!",
+  "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu.",
+  "Oglasite svoju tvrtku besplatno na LFbuyer.com — svaki korisnik kviza može vas otkriti klikom na 'Oglasi'.",
+  "Jeste li znali da se pomoću 'home staginga' kuće i stanovi prodaju čak 75% brže i po 25% višoj cijeni? Više o ovoj učinkovitoj tehnici pripreme nekretnina za prodaju saznajte na blogu LFbuyer.com.",
+  "Klikom na 'Posjeti LFbuyer.com' možete besplatno oglasiti svoje proizvode, usluge ili poslovanje — i učiniti ih vidljivima svima koji riješavaju ovaj kviz.",
+  "Jeste li znali da je LFbuyer skraćenica od 'Looking For a buyer' – tj. tražim kupca...",
+  "Kliknite na 'Lajkaj nas na Facebooku', zatim 'Prati', kako biste ostali u kontaktu s nama.",
+  "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?"
+];
 
 // 🔁 Shuffle utility
 function shuffleArray(array) {
@@ -31,28 +307,36 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+  return array;
 }
 
-// 🎲 Initialization logic
+// 🔁 Get next unused fallback, reshuffle when empty
+function getNextFallback() {
+  if (!Array.isArray(results.fallbacks) || results.fallbacks.length === 0) {
+    return "🌫 Zvijezde šute, ali ti znaš put.";
+  }
+  if (fallbackPool.length === 0) {
+    fallbackPool = shuffleArray([...results.fallbacks]);
+  }
+  return fallbackPool.pop();
+}
+
+// 🎲 Initialize quiz
 function initializeQuiz() {
   quizData = allQuizSets[selectedSetKey];
-  themeKeys = Object.keys(quizData);
-  shuffleArray(themeKeys);
+  themeKeys = shuffleArray(Object.keys(quizData));
 
   themeKeys.forEach(subtheme => {
-    const questionsArray = quizData[subtheme];
-    if (!Array.isArray(questionsArray)) {
-      console.warn(`Skipping non-array subtheme: ${subtheme}`, questionsArray);
-      return;
-    }
-    shuffleArray(questionsArray);
-    questionsArray.forEach(q => shuffleArray(q.answers));
+    const arr = quizData[subtheme];
+    if (!Array.isArray(arr)) return;
+    shuffleArray(arr);
+    arr.forEach(q => shuffleArray(q.answers));
   });
 
-  totalQuestions = themeKeys.reduce((sum, subtheme) => {
-    const questionsArray = quizData[subtheme];
-    return Array.isArray(questionsArray) ? sum + questionsArray.length : sum;
-  }, 0);
+  totalQuestions = themeKeys.reduce(
+    (sum, t) => sum + (Array.isArray(quizData[t]) ? quizData[t].length : 0),
+    0
+  );
 
   currentThemeIndex = 0;
   currentQuestionIndex = 0;
@@ -61,64 +345,56 @@ function initializeQuiz() {
 
   document.getElementById("result").style.display = "none";
   document.getElementById("resultActions").style.display = "none";
+  document.getElementById("extraActions").style.display = "none";
+  document.getElementById("loading").style.display = "none";
   document.getElementById("themeTitle").style.display = "block";
   document.getElementById("question").style.display = "block";
   document.getElementById("answers").style.display = "block";
-  document.getElementById("extraActions").style.display = "none";
 
   showQuestion();
 }
 
-// 🖼️ Render question
+// 🖼️ Show question
 function showQuestion() {
-  if (currentThemeIndex >= themeKeys.length) {
-    showResult();
-    return;
-  }
+  if (currentThemeIndex >= themeKeys.length) return showResult();
 
   const theme = themeKeys[currentThemeIndex];
   const questions = quizData[theme];
-
-  if (!Array.isArray(questions)) {
-    console.warn(`Skipping non-array questions in theme: ${theme}`);
+  if (!Array.isArray(questions) || questions.length === 0) {
     currentThemeIndex++;
     currentQuestionIndex = 0;
-    showQuestion();
-    return;
+    return showQuestion();
   }
-
   if (currentQuestionIndex >= questions.length) {
     currentThemeIndex++;
     currentQuestionIndex = 0;
-    showQuestion();
-    return;
+    return showQuestion();
   }
 
-  const questionObj = questions[currentQuestionIndex];
+  const qObj = questions[currentQuestionIndex];
+  let currentCount = themeKeys
+    .slice(0, currentThemeIndex)
+    .reduce((s, t) => s + quizData[t].length, 0) + currentQuestionIndex + 1;
 
-  let current = 0;
-  for (let i = 0; i < currentThemeIndex; i++) {
-    current += quizData[themeKeys[i]].length;
-  }
-  current += currentQuestionIndex + 1;
+  const tipText =
+    currentCount === totalQuestions
+      ? tips[tips.length - 1]
+      : tips[Math.floor(Math.random() * (tips.length - 1))];
 
-  const tipText = current === totalQuestions
-    ? tips[tips.length - 1]
-    : tips[Math.floor(Math.random() * (tips.length - 1))];
-
-  document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
+  document.getElementById(
+    "progressBox"
+  ).innerText = `🔢 ${currentCount}/${totalQuestions} — 💡 TIP: ${tipText}`;
   document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
-  document.getElementById("question").innerText = questionObj.question;
+  document.getElementById("question").innerText = qObj.question;
 
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
-
-  questionObj.answers.forEach(answer => {
+  qObj.answers.forEach(ans => {
     const btn = document.createElement("button");
-    btn.innerText = answer.text;
+    btn.innerText = ans.text;
     btn.onclick = () => {
-      selectedSigns.push(answer.sign);
-      scores[answer.sign] = (scores[answer.sign] || 0) + 1;
+      selectedSigns.push(ans.sign);
+      scores[ans.sign] = (scores[ans.sign] || 0) + 1;
       currentQuestionIndex++;
       showQuestion();
     };
@@ -126,78 +402,118 @@ function showQuestion() {
   });
 }
 
+// 🏁 Show result
+function showResult() {
+  document.getElementById("themeTitle").style.display = "none";
+  document.getElementById("question").style.display = "none";
+  document.getElementById("answers").style.display = "none";
+  document.getElementById("extraActions").style.display = "block";
+  document.getElementById("loading").style.display = "block";
+
+  fetch("https://astro-api-omega.vercel.app/api/evaluate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-quiz-token": "samja-astro-2025"
+    },
+    body: JSON.stringify(selectedSigns)
+  })
+    .then(res => res.json())
+    .then(data => {
+      const verdict =
+        typeof data.verdict === "string" && data.verdict.trim()
+          ? data.verdict
+          : getNextFallback();
+      renderResult(verdict);
+    })
+    .catch(err => {
+      console.error("Greška:", err);
+      renderResult(getNextFallback());
+      alert("Došlo je do problema s povezivanjem zvijezda.");
+    });
+}
+
+// 🎨 Render result
+function renderResult(poeticVerdict) {
+  document.getElementById("loading").style.display = "none";
+  const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const { emoji, description, traits, connection } = signDescriptions[topSign];
+  const resultDiv = document.getElementById("result");
+  resultDiv.style.display = "block";
+  resultDiv.innerText =
+    `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
+    `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
+    `Privlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n` +
+    `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
+    `🔮 Poetski rezultat: ${poeticVerdict}`;
+  document.getElementById("resultActions").style.display = "flex";
+}
+
 // 🌌 Zodiac descriptions
 const signDescriptions = {
-  Ovan: {
-    emoji: "🔥",
-    description: "strastven, energičan i pun inicijative",
-    traits: "odvažnosti, direktnosti i neovisnosti",
-    connection: "motivira te da riskiraš i slijediš srce"
-  },
-  Bik: {
-    emoji: "🌿",
-    description: "stabilan, senzualan i pouzdan",
-    traits: "nježnosti, lojalnosti i osjećaja za užitak",
-    connection: "smiruje tvoju dušu i pruža sigurnost"
-  },
-  Blizanci: {
-    emoji: "💬",
-    description: "duhovit, znatiželjan i komunikativan",
-    traits: "mentalne stimulacije, spontanosti i zabave",
-    connection: "drži tvoj um budnim i srce razigranim"
-  },
-  Rak: {
-    emoji: "🫶",
-    description: "emotivan, brižan i intuitivan",
-    traits: "topline, nježnosti i duboke povezanosti",
-    connection: "stvara prostor gdje se osjećaš voljeno i sigurno"
-  },
-  Lav: {
-    emoji: "🦁",
-    description: "samopouzdan, karizmatičan i velikodušan",
-    traits: "izražajnosti, strasti i kraljevske energije",
-    connection: "čini da se osjećaš posebno i obožavano"
-  },
-  Djevica: {
-    emoji: "🧠",
-    description: "analitičan, pažljiv i pouzdan",
-    traits: "preciznosti, brige i praktične podrške",
-    connection: "donosi red u tvoje emocije i pomaže ti da rasteš"
-  },
-  Vaga: {
-    emoji: "⚖️",
-    description: "šarmantan, diplomatski i estetski osviješten",
-    traits: "ravnoteže, elegancije i emocionalne harmonije",
-    connection: "uspostavlja sklad i njeguje tvoju nježnu stranu"
-  },
-  Škorpion: {
-    emoji: "🦂",
-    description: "intenzivan, misteriozan i duboko emotivan",
-    traits: "strasti, dubine i magnetične privlačnosti",
-    connection: "izaziva te da se otvoriš i osjetiš bez zadrške"
-  },
-  Strijelac: {
-    emoji: "🏹",
-    description: "optimističan, avanturistički i iskren",
-    traits: "slobode, iskrenosti i filozofske širine",
-    connection: "širi tvoje horizonte i potiče tvoju znatiželju"
-  },
-  Jarac: {
-    emoji: "⛰️",
-    description: "ambiciozan, stabilan i odgovoran",
-    traits: "discipline, pouzdanosti i dugoročnog razmišljanja",
-    connection: "gradi s tobom temelje za trajnu vezu"
-  },
-  Vodenjak: {
-    emoji: "🔮",
-    description: "inovativan, neovisan i vizionarski",
-    traits: "mentalne slobode, originalnosti i humanosti",
-    connection: "inspirira tvoju maštu i poštuje tvoju individualnost"
-  },
-  Ribe: {
-    emoji: "🌊",
-    description: "romantičan, intuitivan i duhovan",
-    traits: "empatije, snova i nježnosti",
-    connection: "povezuje se s tvojom dušom i razumije tvoje emocije"
-  }
+  Ovan:      { emoji:"🔥", description:"strastven, energičan i pun inicijative", traits:"odvažnosti, direktnosti i neovisnosti", connection:"motivira te da riskiraš i slijediš srce" },
+  Bik:       { emoji:"🌿", description:"stabilan, senzualan i pouzdan", traits:"nježnosti, lojalnosti i osjećaja za užitak", connection:"smiruje tvoju dušu i pruža sigurnost" },
+  Blizanci:  { emoji:"💬", description:"duhovit, znatiželjan i komunikativan", traits:"mentalne stimulacije, spontanosti i zabave", connection:"drži tvoj um budnim i srce razigranim" },
+  Rak:       { emoji:"🫶", description:"emotivan, brižan i intuitivan", traits:"topline, nježnosti i duboke povezanosti", connection:"stvara prostor gdje se osjećaš voljeno i sigurno" },
+  Lav:       { emoji:"🦁", description:"samopouzdan, karizmatičan i velikodušan", traits:"izražajnosti, strasti i kraljevske energije", connection:"čini da se osjećaš posebno i obožavano" },
+  Djevica:   { emoji:"🧠", description:"analitičan, pažljiv i pouzdan", traits:"preciznosti, brige i praktične podrške", connection:"donosi red u tvoje emocije i pomaže ti da rasteš" },
+  Vaga:      { emoji:"⚖️", description:"šarmantan, diplomatski i estetski osviješten", traits:"ravnoteže, elegancije i emocionalne harmonije", connection:"uspostavlja sklad i njeguje tvoju nježnu stranu" },
+  Škorpion:  { emoji:"🦂", description:"intenzivan, misteriozan i duboko emotivan", traits:"strasti, dubine i magnetične privlačnosti", connection:"izaziva te da se otvoriš i osjetiš bez zadrške" },
+  Strijelac: { emoji:"🏹", description:"optimističan, avanturistički i iskren", traits:"slobode, iskrenosti i filozofske širine", connection:"širi tvoje horizonte i potiče tvoju znatiželju" },
+  Jarac:     { emoji:"⛰️", description:"ambiciozan, stabilan i odgovoran", traits:"discipline, pouzdanosti i dugoročnog razmišljanja", connection:"gradi s tobom temelje za trajnu vezu" },
+  Vodenjak:  { emoji:"🔮", description:"inovativan, neovisan i vizionarski", traits:"mentalne slobode, originalnosti i humanosti", connection:"inspirira tvoju maštu i poštuje tvoju individualnost" },
+  Ribe:      { emoji:"🌊", description:"romantičan, intuitivan i duhovan", traits:"empatije, snova i nježnosti", connection:"povezuje se s tvojom dušom i razumije tvoje emocije" }
 };
+
+// 📲 WhatsApp share
+document.getElementById("whatsappShareBtn").onclick = () => {
+  const topSign = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const message = `Moj dominantni astrološki znak je: ${topSign}! Saznaj svoj znak na našem kvizu 🔮`;
+  const url = "https://www.lfbuyer.com/hr/zodijak/";
+  window.open(`https://wa.me/?text=${encodeURIComponent(message + " " + url)}`, "_blank");
+};
+
+// 🔄 Restart logic
+document.getElementById("restartBtn").onclick = initializeQuiz;
+
+// 🚀 Start quiz & load data
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("./questions.json")
+    .then(res => res.json())
+    .then(data => {
+      allQuizSets = data;
+      initializeQuiz();
+    });
+
+  fetch("./results.json")
+    .then(res => res.json())
+    .then(data => {
+      results = data;
+      fallbackPool = shuffleArray([...results.fallbacks]);
+    });
+});
+</script>
+
+<!-- 
+ Copyright(c) 2025 RIOGB j.d.o.o.
+  Sva prava pridržana.
+
+  Ova web stranica i njezin sadržaj, uključujući ali ne ograničavajući se na tekst, slike i izvorni kod, 
+  zaštićeni su autorskim pravom i ne smiju se reproducirati, distribuirati niti prenositi 
+  u bilo kojem obliku ili na bilo koji način bez prethodnog pisanog dopuštenja vlasnika autorskih prava.
+-->
+
+<footer class="site-footer">
+  <p>✨ Pokreće te tvoja kozmička znatiželja ✨</p>
+  <p>&copy; <span id="current-year"></span> RIOGB j.d.o.o. Sva prava pridržana.</p>
+  <a href="https://www.lfbuyer.com/privacy-policy/" target="_blank" rel="noopener noreferrer">
+    Pravila privatnosti
+  </a>
+</footer>
+
+<script>
+  // Automatsko ažuriranje godine u podnožju
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
