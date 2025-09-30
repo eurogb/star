@@ -417,12 +417,10 @@ function showResult() {
   })
     .then(res => res.json())
     .then(data => {
-      const verdict =
-        typeof data.verdict === "string" && data.verdict.trim()
-          ? data.verdict
-          : getNextFallback();
-      renderResult(verdict);
-    })
+  const verdict = getNextFallback(); // ignore data.verdict
+  renderResult(verdict);
+})
+
     .catch(err => {
       console.error("Greška:", err);
       renderResult(getNextFallback());
