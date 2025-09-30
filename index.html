@@ -284,20 +284,21 @@ let currentThemeIndex = 0;
 let currentQuestionIndex = 0;
 let scores = {};
 let results = {};
+let fallbackPool = [];
 const selectedSigns = [];
 const selectedSetKey = "idealPartnerSet";
 
 // 💡 Motivational tips
-  const tips = [
-    "'Ponovno riješi kviz'- Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove      nijanse svog astrološkog profila!",
-    "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu",
-    "Oglasite svoju tvrtku besplatno na LFbuyer.com — svaki korisnik kviza može vas otkriti klikom na 'Oglasi'.",
-    "Jeste li znali da se pomoću 'home staginga' kuće i stanovi prodaju čak 75% brže i po 25% višoj cijeni? Više o ovoj učinkovitoj tehnici pripreme nekretnina za prodaju saznajte na blogu LFbuyer.com . ",
-    "Klikom na 'Posjeti LFbuyer.com' možete besplatno oglasiti svoje proizvode, usluge ili poslovanje — i učiniti ih vidljivima svima koji riješavaju ovaj kviz.",
-    "Jeste li znali da je  LFbuyer  skraćenica od  'Looking For a buyer' – tj. tražim kupca...",
-    "Kliknite na 'Lajkaj nas na  Facebooku', zatim 'Prati', kako biste ostali u kontaktu s nama.",
-    "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?" // ← final tip
-  ];
+const tips = [
+  "'Ponovno riješi kviz' - Jeste li znali da se kviz sastoji od pet kategorija, s po tri pitanja u svakoj? Svaki put kad ga riješite, pitanja se mijenjaju — otkrijte nove nijanse svog astrološkog profila!",
+  "Jeste li znali da na LFbuyer.com postoji interaktivna igra za zabavu — simulacija nogometne sezone? Simuliraj tko će biti prvak u nogometu.",
+  "Oglasite svoju tvrtku besplatno na LFbuyer.com — svaki korisnik kviza može vas otkriti klikom na 'Oglasi'.",
+  "Jeste li znali da se pomoću 'home staginga' kuće i stanovi prodaju čak 75% brže i po 25% višoj cijeni? Više o ovoj učinkovitoj tehnici pripreme nekretnina za prodaju saznajte na blogu LFbuyer.com.",
+  "Klikom na 'Posjeti LFbuyer.com' možete besplatno oglasiti svoje proizvode, usluge ili poslovanje — i učiniti ih vidljivima svima koji riješavaju ovaj kviz.",
+  "Jeste li znali da je LFbuyer skraćenica od 'Looking For a buyer' – tj. tražim kupca...",
+  "Kliknite na 'Lajkaj nas na Facebooku', zatim 'Prati', kako biste ostali u kontaktu s nama.",
+  "Jeste li znali da pomoću opcije 'Proslijedi Kviz i Rezultat Putem WhatsAppa' možete poslati kviz i svoj rezultat kao poruku osobi koja vam je draga?"
+];
 
 // 🔁 Shuffle utility
 function shuffleArray(array) {
@@ -305,29 +306,50 @@ function shuffleArray(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
+  return array;
 }
 
-// 🎲 Initialization logic
+// 🔁 Get next unused fallback, reshuffle when empty
+function getNextFallback() {
+  if (!Array.isArray(results.fallbacks) || results.fallbacks.length === 0) {
+    return "🌫 Zvijezde šute, ali ti znaš put.";
+  }
+  if (fallbackPool.length === 0) {
+    fallbackPool = shuffleArray([...results.fallbacks]);
+  }
+  return fallbackPool.pop();
+}
+
+// 🎨 Render result
+function renderResult(poeticVerdict) {
+  document.getElementById("loading").style.display = "none";
+  const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const { emoji, description, traits, connection } = signDescriptions[topSign];
+  const resultDiv = document.getElementById("result");
+  resultDiv.style.display = "block";
+  resultDiv.innerText =
+    `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
+    `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
+    `Privlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n` +
+    `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
+    `🔮 Poetski rezultat: ${poeticVerdict}`;
+  document.getElementById("resultActions").style.display = "flex";
+}
+
+// 🎲 Initialize quiz
 function initializeQuiz() {
   quizData = allQuizSets[selectedSetKey];
   themeKeys = Object.keys(quizData);
   shuffleArray(themeKeys);
 
   themeKeys.forEach(subtheme => {
-    const questionsArray = quizData[subtheme];
-    if (!Array.isArray(questionsArray)) {
-      console.warn(`Skipping non-array subtheme: ${subtheme}`, questionsArray);
-      return;
-    }
-    shuffleArray(questionsArray);
-    questionsArray.forEach(q => shuffleArray(q.answers));
+    const arr = quizData[subtheme];
+    if (!Array.isArray(arr)) return console.warn(`Skipping non-array subtheme: ${subtheme}`);
+    shuffleArray(arr);
+    arr.forEach(q => shuffleArray(q.answers));
   });
 
-  totalQuestions = themeKeys.reduce((sum, subtheme) => {
-    const questionsArray = quizData[subtheme];
-    return Array.isArray(questionsArray) ? sum + questionsArray.length : sum;
-  }, 0);
-
+  totalQuestions = themeKeys.reduce((sum, t) => sum + (Array.isArray(quizData[t]) ? quizData[t].length : 0), 0);
   currentThemeIndex = 0;
   currentQuestionIndex = 0;
   scores = {};
@@ -335,46 +357,37 @@ function initializeQuiz() {
 
   document.getElementById("result").style.display = "none";
   document.getElementById("resultActions").style.display = "none";
+  document.getElementById("extraActions").style.display = "none";
   document.getElementById("themeTitle").style.display = "block";
   document.getElementById("question").style.display = "block";
   document.getElementById("answers").style.display = "block";
-  document.getElementById("extraActions").style.display = "none";
 
   showQuestion();
 }
 
-// 🖼️ Render question
+// 🖼️ Show question
 function showQuestion() {
-  if (currentThemeIndex >= themeKeys.length) {
-    showResult();
-    return;
-  }
+  if (currentThemeIndex >= themeKeys.length) return showResult();
 
   const theme = themeKeys[currentThemeIndex];
   const questions = quizData[theme];
-
   if (!Array.isArray(questions)) {
-    console.warn(`Skipping non-array questions in theme: ${theme}`);
     currentThemeIndex++;
     currentQuestionIndex = 0;
-    showQuestion();
-    return;
+    return showQuestion();
   }
 
   if (currentQuestionIndex >= questions.length) {
     currentThemeIndex++;
     currentQuestionIndex = 0;
-    showQuestion();
-    return;
+    return showQuestion();
   }
 
-  const questionObj = questions[currentQuestionIndex];
-
-  let current = 0;
-  for (let i = 0; i < currentThemeIndex; i++) {
-    current += quizData[themeKeys[i]].length;
-  }
-  current += currentQuestionIndex + 1;
+  const qObj = questions[currentQuestionIndex];
+  let current = themeKeys
+    .slice(0, currentThemeIndex)
+    .reduce((sum, t) => sum + quizData[t].length, 0)
+    + currentQuestionIndex + 1;
 
   const tipText = current === totalQuestions
     ? tips[tips.length - 1]
@@ -382,100 +395,22 @@ function showQuestion() {
 
   document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
   document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
-  document.getElementById("question").innerText = questionObj.question;
+  document.getElementById("question").innerText = qObj.question;
 
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML = "";
-
-  questionObj.answers.forEach(answer => {
+  qObj.answers.forEach(ans => {
     const btn = document.createElement("button");
-    btn.innerText = answer.text;
+    btn.innerText = ans.text;
     btn.onclick = () => {
-      selectedSigns.push(answer.sign);
-      scores[answer.sign] = (scores[answer.sign] || 0) + 1;
+      selectedSigns.push(ans.sign);
+      scores[ans.sign] = (scores[ans.sign] || 0) + 1;
       currentQuestionIndex++;
       showQuestion();
     };
     answersDiv.appendChild(btn);
   });
 }
-
-// 🌌 Zodiac descriptions
-const signDescriptions = {
-  Ovan: {
-    emoji: "🔥",
-    description: "strastven, energičan i pun inicijative",
-    traits: "odvažnosti, direktnosti i neovisnosti",
-    connection: "motivira te da riskiraš i slijediš srce"
-  },
-  Bik: {
-    emoji: "🌿",
-    description: "stabilan, senzualan i pouzdan",
-    traits: "nježnosti, lojalnosti i osjećaja za užitak",
-    connection: "smiruje tvoju dušu i pruža sigurnost"
-  },
-  Blizanci: {
-    emoji: "💬",
-    description: "duhovit, znatiželjan i komunikativan",
-    traits: "mentalne stimulacije, spontanosti i zabave",
-    connection: "drži tvoj um budnim i srce razigranim"
-  },
-  Rak: {
-    emoji: "🫶",
-    description: "emotivan, brižan i intuitivan",
-    traits: "topline, nježnosti i duboke povezanosti",
-    connection: "stvara prostor gdje se osjećaš voljeno i sigurno"
-  },
-  Lav: {
-    emoji: "🦁",
-    description: "samopouzdan, karizmatičan i velikodušan",
-    traits: "izražajnosti, strasti i kraljevske energije",
-    connection: "čini da se osjećaš posebno i obožavano"
-  },
-  Djevica: {
-    emoji: "🧠",
-    description: "analitičan, pažljiv i pouzdan",
-    traits: "preciznosti, brige i praktične podrške",
-    connection: "donosi red u tvoje emocije i pomaže ti da rasteš"
-  },
-  Vaga: {
-    emoji: "⚖️",
-    description: "šarmantan, diplomatski i estetski osviješten",
-    traits: "ravnoteže, elegancije i emocionalne harmonije",
-    connection: "uspostavlja sklad i njeguje tvoju nježnu stranu"
-  },
-  Škorpion: {
-    emoji: "🦂",
-    description: "intenzivan, misteriozan i duboko emotivan",
-    traits: "strasti, dubine i magnetične privlačnosti",
-    connection: "izaziva te da se otvoriš i osjetiš bez zadrške"
-  },
-  Strijelac: {
-    emoji: "🏹",
-    description: "optimističan, avanturistički i iskren",
-    traits: "slobode, iskrenosti i filozofske širine",
-    connection: "širi tvoje horizonte i potiče tvoju znatiželju"
-  },
-  Jarac: {
-    emoji: "⛰️",
-    description: "ambiciozan, stabilan i odgovoran",
-    traits: "discipline, pouzdanosti i dugoročnog razmišljanja",
-    connection: "gradi s tobom temelje za trajnu vezu"
-  },
-  Vodenjak: {
-    emoji: "🔮",
-    description: "inovativan, neovisan i vizionarski",
-    traits: "mentalne slobode, originalnosti i humanosti",
-    connection: "inspirira tvoju maštu i poštuje tvoju individualnost"
-  },
-  Ribe: {
-    emoji: "🌊",
-    description: "romantičan, intuitivan i duhovan",
-    traits: "empatije, snova i nježnosti",
-    connection: "povezuje se s tvojom dušom i razumije tvoje emocije"
-  }
-};
-
 
 // 🏁 Show result
 function showResult() {
@@ -484,22 +419,6 @@ function showResult() {
   document.getElementById("answers").style.display = "none";
   document.getElementById("extraActions").style.display = "block";
   document.getElementById("loading").style.display = "block";
-
-// 🌌 Global declarations (add this near the top of your script)
-let fallbackPool = [];
-
-// … in your DOMContentLoaded (or wherever you fetch results.json):
-fetch("./results.json")
-  .then(r => r.json())
-  .then(data => {
-    results = data;
-    // create a shuffled copy of your fallbacks
-    fallbackPool = shuffleArray([...results.fallbacks]);
-  });
-
-// 🏁 Show result (replace your current showResult)
-function showResult() {
-  // … hide quiz / show loader as before …
 
   fetch("https://astro-api-omega.vercel.app/api/evaluate", {
     method: "POST",
@@ -511,66 +430,40 @@ function showResult() {
   })
   .then(res => res.json())
   .then(data => {
-    // … if API returns data.verdict, use it …
-    let verdict = data.verdict;
-    if (!verdict) {
-      verdict = getNextFallback();
-    }
+    const verdict = typeof data.verdict === "string" && data.verdict.trim()
+      ? data.verdict
+      : getNextFallback();
     renderResult(verdict);
   })
-  .catch(err => {
-    console.error(err);
+  .catch(() => {
     const verdict = getNextFallback();
     renderResult(verdict);
     alert("Došlo je do problema s povezivanjem zvijezda.");
   });
 }
 
-// Utility to grab the next unused fallback, re-shuffling when empty
-function getNextFallback() {
-  if (!fallbackPool.length) {
-    fallbackPool = shuffleArray([...results.fallbacks]);
-  }
-  return fallbackPool.pop();
-}
-
-// Pull out your result–rendering logic for clarity
-function renderResult(poeticVerdict) {
-  document.getElementById("loading").style.display = "none";
-  const topSign = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
-  const { emoji, description, traits, connection } = signDescriptions[topSign];
-  const resultDiv = document.getElementById("result");
-  resultDiv.style.display = "block";
-  resultDiv.innerText =
-    `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
-    `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
-    `Privlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n` +
-    `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
-    `🔮 Poetski rezultat: ${poeticVerdict}`;
-  document.getElementById("resultActions").style.display = "flex";
-  )}
-  .catch(err => {
-    console.error("Greška:", err);
-    document.getElementById("loading").style.display = "none";
-    const fallbackVerdict = results.fallbacks && results.fallbacks.length > 0
-      ? results.fallbacks[Math.floor(Math.random() * results.fallbacks.length)]
-      : "🌫 Zvijezde šute, ali ti znaš put.";
-
-    const resultDiv = document.getElementById("result");
-    resultDiv.style.display = "block";
-    resultDiv.innerText = `🔮 Poetski rezultat: ${fallbackVerdict}`;
-    alert("Došlo je do problema s povezivanjem zvijezda.");
-  });
-}
-
+// 🌌 Zodiac descriptions
+const signDescriptions = {
+  Ovan:      { emoji: "🔥", description: "strastven, energičan i pun inicijative", traits: "odvažnosti, direktnosti i neovisnosti", connection: "motivira te da riskiraš i slijediš srce" },
+  Bik:       { emoji: "🌿", description: "stabilan, senzualan i pouzdan", traits: "nježnosti, lojalnosti i osjećaja za užitak", connection: "smiruje tvoju dušu i pruža sigurnost" },
+  Blizanci:  { emoji: "💬", description: "duhovit, znatiželjan i komunikativan", traits: "mentalne stimulacije, spontanosti i zabave", connection: "drži tvoj um budnim i srce razigranim" },
+  Rak:       { emoji: "🫶", description: "emotivan, brižan i intuitivan", traits: "topline, nježnosti i duboke povezanosti", connection: "stvara prostor gdje se osjećaš voljeno i sigurno" },
+  Lav:       { emoji: "🦁", description: "samopouzdan, karizmatičan i velikodušan", traits: "izražajnosti, strasti i kraljevske energije", connection: "čini da se osjećaš posebno i obožavano" },
+  Djevica:   { emoji: "🧠", description: "analitičan, pažljiv i pouzdan", traits: "preciznosti, brige i praktične podrške", connection: "donosi red u tvoje emocije i pomaže ti da rasteš" },
+  Vaga:      { emoji: "⚖️", description: "šarmantan, diplomatski i estetski osviješten", traits: "ravnoteže, elegancije i emocionalne harmonije", connection: "uspostavlja sklad i njeguje tvoju nježnu stranu" },
+  Škorpion:  { emoji: "🦂", description: "intenzivan, misteriozan i duboko emotivan", traits: "strasti, dubine i magnetične privlačnosti", connection: "izaziva te da se otvoriš i osjetiš bez zadrške" },
+  Strijelac: { emoji: "🏹", description: "optimističan, avanturistički i iskren", traits: "slobode, iskrenosti i filozofske širine", connection: "širi tvoje horizonte i potiče tvoju znatiželju" },
+  Jarac:     { emoji: "⛰️", description: "ambiciozan, stabilan i odgovoran", traits: "discipline, pouzdanosti i dugoročnog razmišljanja", connection: "gradi s tobom temelje za trajnu vezu" },
+  Vodenjak:  { emoji: "🔮", description: "inovativan, neovisan i vizionarski", traits: "mentalne slobode, originalnosti i humanosti", connection: "inspirira tvoju maštu i poštuje tvoju individualnost" },
+  Ribe:      { emoji: "🌊", description: "romantičan, intuitivan i duhovan", traits: "empatije, snova i nježnosti", connection: "povezuje se s tvojom dušom i razumije tvoje emocije" }
+};
 
 // 📲 WhatsApp share
 document.getElementById("whatsappShareBtn").onclick = () => {
   const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
   const message = `Moj dominantni astrološki znak je: ${topSign}! Saznaj svoj znak na našem kvizu 🔮`;
   const url = "https://www.lfbuyer.com/hr/zodijak/";
-  const whatsappLink = `https://wa.me/?text=${encodeURIComponent(message + " " + url)}`;
-  window.open(whatsappLink, "_blank");
+  window.open(`https://wa.me/?text=${encodeURIComponent(message + " " + url)}`, "_blank");
 };
 
 // 🔄 Restart logic
@@ -578,7 +471,7 @@ document.getElementById("restartBtn").onclick = () => {
   initializeQuiz();
 };
 
-// 🚀 Start quiz
+// 🚀 Start quiz & load data
 document.addEventListener("DOMContentLoaded", () => {
   fetch("./questions.json")
     .then(res => res.json())
@@ -591,6 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(res => res.json())
     .then(data => {
       results = data;
+      fallbackPool = shuffleArray([...results.fallbacks]);
     });
 });
 </script>
