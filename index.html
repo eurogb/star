@@ -311,7 +311,7 @@ quizData = allQuizSets;
 
 // 🎲 Initialization logic
 function initializeQuiz() {
- const selectedSetKey = "idealPartnerSet";
+const selectedSetKey = "idealPartnerSet";
 quizData = allQuizSets[selectedSetKey];
 
 themeKeys = Object.keys(quizData);
@@ -326,6 +326,7 @@ themeKeys.forEach(subtheme => {
   shuffleArray(questionsArray);
   questionsArray.forEach(q => shuffleArray(q.answers));
 });
+
 
 totalQuestions = themeKeys.reduce((sum, subtheme) => {
   const questionsArray = quizData[subtheme];
