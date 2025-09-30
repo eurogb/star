@@ -486,7 +486,7 @@ function showResult() {
   document.getElementById("loading").style.display = "block";
 
   fetch("https://astro-api-omega.vercel.app/api/evaluate", {
-    method: "GET",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Origin": "https://eurogb.github.io",
