@@ -485,13 +485,13 @@ function showResult() {
   document.getElementById("extraActions").style.display = "block";
   document.getElementById("loading").style.display = "block";
 
-const signsParam = selectedSigns.join(",");
-fetch(`https://astro-api-omega.vercel.app/api/evaluate?signs=${encodeURIComponent(signsParam)}`, {
-  method: "GET",
-  headers: {
-    "x-quiz-token": "samja-astro-2025"
-  }
-})
+  fetch("https://astro-api-omega.vercel.app/api/evaluate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Origin": "https://eurogb.github.io",
+      "x-quiz-token": "samja-astro-2025"
+    },
     body: JSON.stringify(selectedSigns)
   })
   .then(res => res.json())
