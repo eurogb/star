@@ -548,7 +548,7 @@ function renderResult(poeticVerdict) {
     `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
     `🔮 Poetski rezultat: ${poeticVerdict}`;
   document.getElementById("resultActions").style.display = "flex";
-  })
+  }
   .catch(err => {
     console.error("Greška:", err);
     document.getElementById("loading").style.display = "none";
