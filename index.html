@@ -427,14 +427,72 @@ function showResult() {
       alert("Došlo je do problema s povezivanjem zvijezda.");
     });
 }
+// ✨ Thematic verdict generator
+function getSignBasedVerdict(sign) {
+  const themed = {
+    Ovan: [
+      "🔥 Tvoja energija pokreće zvijezde.",
+      "⚡ Tvoj impuls je iskra sudbine."
+    ],
+    Bik: [
+      "🌿 Tvoja postojanost gradi svjetove.",
+      "🍃 Ljubav s tobom cvjeta u tišini."
+    ],
+    Blizanci: [
+      "💬 Tvoje misli plešu kao vjetar.",
+      "🎭 Svaka tvoja riječ nosi čaroliju."
+    ],
+    Rak: [
+      "🫶 Tvoja nježnost stvara svjetove.",
+      "🌙 Osjećaš dublje nego što zvijezde znaju."
+    ],
+    Lav: [
+      "🦁 Tvoja strast osvaja svemir.",
+      "🌞 Ti si sunce u tuđem nebu."
+    ],
+    Djevica: [
+      "🧠 Tvoja preciznost donosi mir.",
+      "📎 Svemir se oslanja na tvoju jasnoću."
+    ],
+    Vaga: [
+      "⚖️ Tvoja ravnoteža liječi srca.",
+      "🎨 Ljubav s tobom je simfonija harmonije."
+    ],
+    Škorpion: [
+      "🦂 Tvoja dubina mami tajne svemira.",
+      "🌑 Ljubav s tobom je transformacija."
+    ],
+    Strijelac: [
+      "🏹 Tvoja iskrenost osvjetljava put.",
+      "🌍 Tvoja duša traži istinu u zvijezdama."
+    ],
+    Jarac: [
+      "⛰️ Tvoja snaga gradi vječnost.",
+      "🕰 Ljubav s tobom traje kroz epohe."
+    ],
+    Vodenjak: [
+      "🔮 Tvoja vizija mijenja galaksije.",
+      "🌌 Misli ti lete brže od svjetlosti."
+    ],
+    Ribe: [
+      "🌊 Tvoja intuicija plovi kroz dimenzije.",
+      "🎐 Tvoje srce pjeva jezikom snova."
+    ]
+  };
+  const pool = themed[sign] || results.fallbacks;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
 
 // 🎨 Render result
-function renderResult(poeticVerdict) {
+function renderResult(_unused) {
   document.getElementById("loading").style.display = "none";
   const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
   const { emoji, description, traits, connection } = signDescriptions[topSign];
   const resultDiv = document.getElementById("result");
   resultDiv.style.display = "block";
+
+  const poeticVerdict = getSignBasedVerdict(topSign);
+
   resultDiv.innerText =
     `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
     `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
@@ -443,6 +501,7 @@ function renderResult(poeticVerdict) {
     `🔮 Poetski rezultat: ${poeticVerdict}`;
   document.getElementById("resultActions").style.display = "flex";
 }
+
 
 // 🌌 Zodiac descriptions
 const signDescriptions = {
