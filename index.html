@@ -548,33 +548,51 @@ function shuffleArray(array) {
   }
 }
 
-// 🚀 Start quiz
-document.addEventListener("DOMContentLoaded", () => {
-  fetch("https://astro-api-omega.vercel.app/api/data?file=questions", {
-    headers: { "x-quiz-token": "samja-astro-2025" }
-  })
-  .then(res => res.json())
-  .then(data => {
-    const allQuizSets = { idealPartnerSet: data };
-    quizData = allQuizSets["idealPartnerSet"];
-    themeKeys = Object.keys(quizData);
-    shuffleArray(themeKeys);
-    themeKeys.forEach(theme => {
-      shuffleArray(quizData[theme]);
-      quizData[theme].forEach(q => shuffleArray(q.answers));
-    });
-    totalQuestions = themeKeys.reduce((sum, theme) => sum + quizData[theme].length, 0);
-    showQuestion();
-  });
+ // 🚀 Start quiz
+  document.addEventListener("DOMContentLoaded", () => {
+    // Load your quiz questions
+    fetch("./questions.json")
+      .then(res => res.json())
+      .then(data => {
+        // `data` already is { idealPartnerSet: { … }, astroFantazijaSet: { … }, … }
+        const selectedSetKey = "idealPartnerSet";
+        quizData = data[selectedSetKey];       // now an object whose values are arrays
 
-  fetch("https://astro-api-omega.vercel.app/api/data?file=results", {
-    headers: { "x-quiz-token": "samja-astro-2025" }
-  })
-  .then(res => res.json())
-  .then(data => {
-    results = data;
+        // Build and shuffle the list of sub-themes
+        themeKeys = Object.keys(quizData);
+        shuffleArray(themeKeys);
+
+        // For each subtheme, shuffle its questions and their answers
+        themeKeys.forEach(theme => {
+          const questions = quizData[theme];
+          if (!Array.isArray(questions)) {
+            console.warn(`Skipping non-array theme: ${theme}`, questions);
+            return;
+          }
+          shuffleArray(questions);
+          questions.forEach(q => shuffleArray(q.answers));
+        });
+
+        // Count total questions
+        totalQuestions = themeKeys.reduce((sum, theme) => {
+          const arr = quizData[theme];
+          return Array.isArray(arr) ? sum + arr.length : sum;
+        }, 0);
+
+        // Initialize pointers & scores, then show first question
+        currentThemeIndex = 0;
+        currentQuestionIndex = 0;
+        scores = {};
+        showQuestion();
+      });
+
+    // Load your results/interpretations
+    fetch("./results.json")
+      .then(res => res.json())
+      .then(data => {
+        results = data;
+      });
   });
-});
 </script>
 <!-- 
  Copyright(c) 2025 RIOGB j.d.o.o.
