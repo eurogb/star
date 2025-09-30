@@ -485,6 +485,22 @@ function showResult() {
   document.getElementById("extraActions").style.display = "block";
   document.getElementById("loading").style.display = "block";
 
+// 🌌 Global declarations (add this near the top of your script)
+let fallbackPool = [];
+
+// … in your DOMContentLoaded (or wherever you fetch results.json):
+fetch("./results.json")
+  .then(r => r.json())
+  .then(data => {
+    results = data;
+    // create a shuffled copy of your fallbacks
+    fallbackPool = shuffleArray([...results.fallbacks]);
+  });
+
+// 🏁 Show result (replace your current showResult)
+function showResult() {
+  // … hide quiz / show loader as before …
+
   fetch("https://astro-api-omega.vercel.app/api/evaluate", {
     method: "POST",
     headers: {
@@ -495,20 +511,43 @@ function showResult() {
   })
   .then(res => res.json())
   .then(data => {
-    document.getElementById("loading").style.display = "none";
-    const topSign = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
-    const resultDiv = document.getElementById("result");
-    resultDiv.style.display = "block";
+    // … if API returns data.verdict, use it …
+    let verdict = data.verdict;
+    if (!verdict) {
+      verdict = getNextFallback();
+    }
+    renderResult(verdict);
+  })
+  .catch(err => {
+    console.error(err);
+    const verdict = getNextFallback();
+    renderResult(verdict);
+    alert("Došlo je do problema s povezivanjem zvijezda.");
+  });
+}
 
-    const { emoji, description, traits, connection } = signDescriptions[topSign];
-    const verdict = data.verdict || (
-      results.fallbacks && results.fallbacks.length > 0
-        ? results.fallbacks[Math.floor(Math.random() * results.fallbacks.length)]
-        : "🌫 Zvijezde šute, ali ti znaš put."
-    );
+// Utility to grab the next unused fallback, re-shuffling when empty
+function getNextFallback() {
+  if (!fallbackPool.length) {
+    fallbackPool = shuffleArray([...results.fallbacks]);
+  }
+  return fallbackPool.pop();
+}
 
-    resultDiv.innerText = `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\nTvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\nPrivlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n💘 Otkrij tko te čeka među zvijezdama!\n\n🔮 Poetski rezultat: ${verdict}`;
-    document.getElementById("resultActions").style.display = "flex";
+// Pull out your result–rendering logic for clarity
+function renderResult(poeticVerdict) {
+  document.getElementById("loading").style.display = "none";
+  const topSign = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const { emoji, description, traits, connection } = signDescriptions[topSign];
+  const resultDiv = document.getElementById("result");
+  resultDiv.style.display = "block";
+  resultDiv.innerText =
+    `${emoji} Tvoj dominantni astrološki znak je: ${topSign}.\n\n` +
+    `Tvoj idealan partner nosi energiju znaka ${topSign} — ${description}.\n` +
+    `Privlače te osobine poput ${traits}, a tvoja ljubavna dinamika najbolje funkcionira s osobom koja te ${connection}.\n\n` +
+    `💘 Otkrij tko te čeka među zvijezdama!\n\n` +
+    `🔮 Poetski rezultat: ${poeticVerdict}`;
+  document.getElementById("resultActions").style.display = "flex"
   })
   .catch(err => {
     console.error("Greška:", err);
