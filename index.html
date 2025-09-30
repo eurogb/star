@@ -427,6 +427,8 @@ function showResult() {
       alert("Došlo je do problema s povezivanjem zvijezda.");
     });
 }
+// 🪐 Store shuffled verdicts per sign
+const verdictPools = {};
 // ✨ Thematic verdict generator
 function getSignBasedVerdict(sign) {
   const themed = {
@@ -479,8 +481,19 @@ function getSignBasedVerdict(sign) {
       "🎐 Tvoje srce pjeva jezikom snova."
     ]
   };
-  const pool = themed[sign] || results.fallbacks;
-  return pool[Math.floor(Math.random() * pool.length)];
+  // Initialize and shuffle if not yet done
+  if (!verdictPools[sign]) {
+    const pool = themed[sign] || results.fallbacks;
+    verdictPools[sign] = shuffleArray([...pool]);
+  }
+
+  // Rotate through the pool
+  if (verdictPools[sign].length === 0) {
+    const pool = themed[sign] || results.fallbacks;
+    verdictPools[sign] = shuffleArray([...pool]);
+  }
+
+  return verdictPools[sign].pop();
 }
 
 // 🎨 Render result
