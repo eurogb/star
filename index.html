@@ -302,8 +302,9 @@ let results = {}; // ✅ Declare results globally
  fetch("./questions.json")
   .then(res => res.json())
   .then(data => {
-    const allQuizSets = data;
-    const quizData = allQuizSets["idealPartnerSet"];
+const allQuizSets = data;
+quizData = allQuizSets;
+
     // continue...
   });
 
@@ -313,13 +314,19 @@ function initializeQuiz() {
   const selectedSetKey = "idealPartnerSet";
   quizData = allQuizSets[selectedSetKey];
 
-  themeKeys = Object.keys(quizData);
-  shuffleArray(themeKeys);
+themeKeys = Object.keys(quizData);
+shuffleArray(themeKeys);
 
-  themeKeys.forEach(theme => {
-    shuffleArray(quizData[theme]);
-    quizData[theme].forEach(q => shuffleArray(q.answers));
-  });
+themeKeys.forEach(theme => {
+  const themeData = quizData[theme];
+  if (!Array.isArray(themeData)) {
+    console.warn(`Skipping non-array theme: ${theme}`, themeData);
+    return;
+  }
+  shuffleArray(themeData);
+  themeData.forEach(q => shuffleArray(q.answers));
+});
+
 
   totalQuestions = themeKeys.reduce((sum, theme) => sum + quizData[theme].length, 0);
   currentThemeIndex = 0;
