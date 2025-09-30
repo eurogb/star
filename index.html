@@ -311,28 +311,32 @@ quizData = allQuizSets;
 
 // 🎲 Initialization logic
 function initializeQuiz() {
-  const selectedSetKey = "idealPartnerSet";
+  const selectedSetKey = "idealPartnerSet"; // 🔑 Choose your active set
   quizData = allQuizSets[selectedSetKey];
 
-themeKeys = Object.keys(quizData);
-shuffleArray(themeKeys);
+  themeKeys = Object.keys(quizData);
+  shuffleArray(themeKeys);
 
-themeKeys.forEach(theme => {
-  const themeData = quizData[theme];
-  if (!Array.isArray(themeData)) {
-    console.warn(`Skipping non-array theme: ${theme}`, themeData);
-    return;
-  }
-  shuffleArray(themeData);
-  themeData.forEach(q => shuffleArray(q.answers));
-});
+  themeKeys.forEach(theme => {
+    const themeData = quizData[theme];
+    if (!Array.isArray(themeData)) {
+      console.warn(`Skipping non-array theme: ${theme}`, themeData);
+      return;
+    }
+    shuffleArray(themeData);
+    themeData.forEach(q => shuffleArray(q.answers));
+  });
 
+  totalQuestions = themeKeys.reduce((sum, theme) => {
+    const themeData = quizData[theme];
+    return Array.isArray(themeData) ? sum + themeData.length : sum;
+  }, 0);
 
-  totalQuestions = themeKeys.reduce((sum, theme) => sum + quizData[theme].length, 0);
   currentThemeIndex = 0;
   currentQuestionIndex = 0;
   scores = {};
 }
+
 
 // 🖼️ Render question
 function showQuestion() {
@@ -344,6 +348,14 @@ function showQuestion() {
   const theme = themeKeys[currentThemeIndex];
   const questions = quizData[theme];
 
+  if (!Array.isArray(questions)) {
+    console.warn(`Skipping non-array questions in theme: ${theme}`);
+    currentThemeIndex++;
+    currentQuestionIndex = 0;
+    showQuestion();
+    return;
+  }
+
   if (currentQuestionIndex >= questions.length) {
     currentThemeIndex++;
     currentQuestionIndex = 0;
@@ -353,16 +365,19 @@ function showQuestion() {
 
   const questionObj = questions[currentQuestionIndex];
 
+  // 🧮 Progress calculation
   let current = 0;
   for (let i = 0; i < currentThemeIndex; i++) {
     current += quizData[themeKeys[i]].length;
   }
   current += currentQuestionIndex + 1;
 
-  let tipText = current === totalQuestions
+  // 💡 Tip logic
+  const tipText = current === totalQuestions
     ? tips[tips.length - 1]
     : tips[Math.floor(Math.random() * (tips.length - 1))];
 
+  // 🖼️ Render UI
   document.getElementById("progressBox").innerText = `🔢 ${current}/${totalQuestions} — 💡 TIP: ${tipText}`;
   document.getElementById("themeTitle").innerText = `Tema: ${theme.toUpperCase()}`;
   document.getElementById("question").innerText = questionObj.question;
@@ -382,6 +397,7 @@ function showQuestion() {
     answersDiv.appendChild(btn);
   });
 }
+
   // 🌌 Zodiac descriptions
 const signDescriptions = {
   Ovan: {
