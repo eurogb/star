@@ -224,24 +224,52 @@
   </script>
 
   <script>
-    const tips = [
-      "Svaki dan je nova prilika za osmijeh.",
-      /* …more tips… */
-    ];
-    const tipBox = document.getElementById("tipBox");
+  const fallbackTips = [
+    "Svaki dan je nova prilika za osmijeh.",
+    "Tvoje misli oblikuju tvoju stvarnost.",
+    "Započni dan s zahvalnošću i sve će sjati.",
+    "Tvoje snage su veće nego tvoje sumnje.",
+    "Budi razlog nečijeg osmijeha danas.",
+    "Mir dolazi iznutra — njeguj ga.",
+    "Tvoje ideje vrijede — podijeli ih.",
+    "Ne moraš biti savršen da bi bio sjajan.",
+    "Svijet treba tvoju jedinstvenost.",
+    "Hrabrost je tihi glas koji kaže: pokušaj opet."
+  ];
 
-    function showRandomTip() {
-      const tip = tips[Math.floor(Math.random() * tips.length)];
-      tipBox.style.opacity = 0;
-      setTimeout(() => {
-        tipBox.textContent = tip;
-        tipBox.style.opacity = 1;
-      }, 300);
+  const tipBox = document.getElementById("tipBox");
+  let tips = [...fallbackTips]; // default fallback
+  let tipIndex = 0;
+
+  async function loadTips() {
+    try {
+      const res = await fetch('/api/tip/hr'); // Vercel rewrite to hide real path
+      if (!res.ok) throw new Error("API tip fetch failed");
+      const data = await res.json();
+      if (data.motivationalTips && Array.isArray(data.motivationalTips)) {
+        tips = data.motivationalTips.map(t => t.tip);
+      }
+    } catch (err) {
+      console.warn("Using fallback tips:", err);
     }
+  }
 
+  function showRandomTip() {
+    const tip = tips[tipIndex % tips.length];
+    tipBox.style.opacity = 0;
+    setTimeout(() => {
+      tipBox.textContent = tip;
+      tipBox.style.opacity = 1;
+      tipIndex++;
+    }, 300);
+  }
+
+  loadTips().then(() => {
     showRandomTip();
     setInterval(showRandomTip, 10000);
-  </script>
+  });
+</script>
+
  
 <!-- 
  Copyright(c) 2025 RIOGB j.d.o.o.
