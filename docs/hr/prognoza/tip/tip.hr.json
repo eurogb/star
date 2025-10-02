@@ -1,0 +1,24 @@
+{
+  "motivationalTips": [
+    { "id": 1, "tip": "Vjeruj u sebe čak i kada drugi sumnjaju u tebe." },
+    { "id": 2, "tip": "Mali svakodnevni koraci vode do velikih rezultata." },
+    { "id": 3, "tip": "Neuspjesi su lekcije, a ne izgovori." },
+    { "id": 4, "tip": "Dosljednost uvijek pobjeđuje intenzitet." },
+    { "id": 5, "tip": "Usredotoči se na ono što možeš kontrolirati, a ne na ono što ne možeš." },
+    { "id": 6, "tip": "Disciplina je most između ciljeva i uspjeha." },
+    { "id": 7, "tip": "Tvoja jedina konkurencija si ti sam od jučer." },
+    { "id": 8, "tip": "Sanjaj veliko, počni malo, djeluj odmah." },
+    { "id": 9, "tip": "Ne dopusti da strah odlučuje o tvojoj budućnosti." },
+    { "id": 10, "tip": "Uspjeh se gradi na navikama, a ne na slučajnim činovima." },
+    { "id": 11, "tip": "Slavi male pobjede; one vode do velikih." },
+    { "id": 12, "tip": "Ne moraš biti savršen, dovoljno je da budeš uporan." },
+    { "id": 13, "tip": "Kada je teško, znači da rasteš." },
+    { "id": 14, "tip": "Najbolje vrijeme za početak bilo je jučer, drugo najbolje je danas." },
+    { "id": 15, "tip": "Okruži se ljudima koji te podižu." },
+    { "id": 16, "tip": "Odmor i oporavak su dio napretka." },
+    { "id": 17, "tip": "Djelovanje pobjeđuje strah; pretjerano razmišljanje ga hrani." },
+    { "id": 18, "tip": "Neuspjesi su stepenice do uspjeha." },
+    { "id": 19, "tip": "Zahvalnost pretvara ono što imaš u dovoljno." },
+    { "id": 20, "tip": "Nastavi dalje – tvoja buduća verzija bit će ti zahvalna." }
+  ]
+}
