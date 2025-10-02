@@ -188,88 +188,70 @@
 </a>
 
 <script>
-  // Poetic fallback theme and messages for each zodiac sign
-  const fallbackTheme = "Zvjezdani zagrljaj";
-  const fallbackMessages = {
-    aries:      "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
-    taurus:     "Svojim postojanim korakom gradiš utjehu svijeta.",
-    gemini:     "Riječi lete poput leptira, pronalazeći svjetlost u svakom srcu.",
-    cancer:     "Tvoja su osjećanja valovi koji miluju dušu.",
-    leo:        "Sjena tvog osmijeha daruje toplinu hladnom svijetu.",
-    virgo:      "Tvoja preciznost donosi red u kaos zvijezda.",
-    libra:      "U ravnoteži pronalaziš svoju istinu.",
-    scorpio:    "Dubina tvoje strasti razbija prepreke tame.",
-    sagittarius:"Tvoja sloboda širi krila beskraju.",
-    capricorn:  "Tvrdoglava postojanost gradi planine uspjeha.",
-    aquarius:   "Tvoji snovi osvjetljavaju novi horizont.",
-    pisces:     "Magija mašte plovi oceanom mogućnosti."
-  };
+    const fallbackTheme = "Zvjezdani zagrljaj";
+    const fallbackMessages = {
+      aries:      "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
+      taurus:     "Svojim postojanim korakom gradiš utjehu svijeta.",
+      /* …other signs… */
+    };
 
-  async function showForecast() {
-    const sign = document.getElementById("signSelect").value;
-    const today = new Date().toISOString().split("T")[0];
-    const filePath = `${today}-horoscope.json`; // JSON in same folder
+    async function showForecast() {
+      const sign = document.getElementById("signSelect").value;
+      const today = new Date().toISOString().split("T")[0];
+      // Point into the 'dan' folder and use 'horoskop' in the filename
+      const filePath = `dan/${today}-horoskop.json`;
 
-    try {
-      const response = await fetch(filePath);
-      if (!response.ok) throw new Error("File not found");
+      try {
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error("File not found");
 
-      const horoscopes = await response.json();
-      const entry = horoscopes[today] || {};
-      const theme = entry.theme;
-      const forecast = entry[sign];
+        const data = await response.json();
+        const entry = data[today] || {};
+        const theme = entry.theme;
+        const forecast = entry[sign];
 
-      if (forecast) {
-        document.getElementById("output").innerHTML = `
-          <h2>Tema: ${theme}</h2>
-          <p>${forecast}</p>
-        `;
-      } else {
-        // File loaded but no forecast for this sign
+        if (forecast) {
+          document.getElementById("output").innerHTML = `
+            <h2>Tema: ${theme}</h2>
+            <p>${forecast}</p>
+          `;
+        } else {
+          document.getElementById("output").innerHTML = `
+            <h2>Tema: ${fallbackTheme}</h2>
+            <p>${fallbackMessages[sign]}</p>
+          `;
+        }
+      } catch (error) {
+        console.warn("Horoskop load error:", error);
         document.getElementById("output").innerHTML = `
           <h2>Tema: ${fallbackTheme}</h2>
           <p>${fallbackMessages[sign]}</p>
         `;
       }
-    } catch (error) {
-      // JSON missing or invalid
-      console.warn("Horoscope load error:", error);
-      document.getElementById("output").innerHTML = `
-        <h2>Tema: ${fallbackTheme}</h2>
-        <p>${fallbackMessages[sign]}</p>
-      `;
     }
-  }
-</script>
+  </script>
 
-<script>
-  const tips = [
-    "Svaki dan je nova prilika za osmijeh.",
-    "Tvoje misli oblikuju tvoju stvarnost.",
-    "Započni dan s zahvalnošću i sve će sjati.",
-    "Tvoje snage su veće nego tvoje sumnje.",
-    "Budi razlog nečijeg osmijeha danas.",
-    "Mir dolazi iznutra — njeguj ga.",
-    "Tvoje ideje vrijede — podijeli ih.",
-    "Ne moraš biti savršen da bi bio sjajan.",
-    "Svijet treba tvoju jedinstvenost.",
-    "Hrabrost je tihi glas koji kaže: pokušaj opet."
-  ];
+  <script>
+    const tips = [
+      "Svaki dan je nova prilika za osmijeh.",
+      "Tvoje misli oblikuju tvoju stvarnost.",
+      /* …more tips… */
+    ];
 
-  const tipBox = document.getElementById("tipBox");
+    const tipBox = document.getElementById("tipBox");
 
-  function showRandomTip() {
-    const tip = tips[Math.floor(Math.random() * tips.length)];
-    tipBox.style.opacity = 0;
-    setTimeout(() => {
-      tipBox.textContent = tip;
-      tipBox.style.opacity = 1;
-    }, 300);
-  }
+    function showRandomTip() {
+      const tip = tips[Math.floor(Math.random() * tips.length)];
+      tipBox.style.opacity = 0;
+      setTimeout(() => {
+        tipBox.textContent = tip;
+        tipBox.style.opacity = 1;
+      }, 300);
+    }
 
-  showRandomTip(); // initial tip
-  setInterval(showRandomTip, 10000); // rotate every 10 sec
-</script>
+    showRandomTip();
+    setInterval(showRandomTip, 10000);
+  </script>
 
  
 <!-- 
