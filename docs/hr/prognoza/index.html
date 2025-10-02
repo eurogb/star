@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Language" content="en">
+  <title>Dnevni horoskop</title>
+  
+
+    <style>
+    .container {
+  max-width: 800px;
+  width: 95%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+
+
+    
+    body {
+      background: linear-gradient(to right, #1e1e2f, #2c2c3e);
+      color: #f0f0f5;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #ffd700;
+      text-shadow: 1px 1px 5px #000;
+    }
+
+    select {
+      padding: 10px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      border: none;
+      background-color: #333;
+      color: #fff;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    button {
+      padding: 8px 20px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      border: none;
+      background-color: #ffd700;
+      color: #1e1e2f;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ffcc00;
+    }
+
+    #output {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      color: #87cefa;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.2em;
+      line-height: 1.6;
+    }
+    #tipBox {
+  margin: 20px auto;
+  padding: 15px 20px;
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+  font-size: 1.1em;
+  font-style: italic;
+  color: #ffd700;
+  transition: opacity 0.5s ease;
+}
+.whatsapp-button {
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 1.1em;
+  font-family: 'Segoe UI', sans-serif;
+  border-radius: 8px;
+  background-color: #25D366; /* WhatsApp green */
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.whatsapp-button:hover {
+  background-color: #1ebe5d;
+}
+
+    
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+  }
+ .container {
+    width: 95%;
+    padding: 15px;
+  }
+  h1 {
+    font-size: 2em;
+  }
+
+  select, button {
+    width: 100%;
+    font-size: 1em;
+    margin-bottom: 15px;
+  }
+
+  #output {
+    padding: 15px;
+    font-size: 1em;
+  }
+
+  h2 {
+    font-size: 1.3em;
+  }
+
+  p {
+    font-size: 1.1em;
+    line-height: 1.5;
+  }
+}
+
+  </style>
+     <div id="ezoic-pub-ad-placeholder-101"></div> <!-- Top ad -->
+</head>
+<body>
+  <div class="container">
+ <h1>🌟 Dnevna Doza Zabave</h1>
+<div id="tipBox"></div>  
+  <select id="signSelect">
+    <option value="aries">♈️ Ovan</option>
+    <option value="taurus">♉️ Bik</option>
+    <option value="gemini">♊️ Blizanci</option>
+    <option value="cancer">♋️ Rak</option>
+    <option value="leo">♌️ Lav</option>
+    <option value="virgo">♍️ Djevica</option>
+    <option value="libra">♎️ Vaga</option>
+    <option value="scorpio">♏️ Škorpion</option>
+    <option value="sagittarius">♐️ Strijelac</option>
+    <option value="capricorn">♑️ Jarac</option>
+    <option value="aquarius">♒️ Vodenjak</option>
+    <option value="pisces">♓️ Ribe</option>
+    <!-- Add all 12 signs -->
+  </select>
+  <button onclick="showForecast()"> 🔮 Pogledaj Horoskop</button>
+  <div id="ezoic-pub-ad-placeholder-102"></div> <!-- Inline ad -->
+  <div id="output"></div>
+  <div>
+      <a href="https://www.lfbuyer.com/hr/" target="_blank">
+      <button>🌐 Oglasnik LF BUYER.COM</button>
+    </a>
+      <a href="https://eurogb.github.io/star/" target="_blank">
+      <button>💖 Vaš Idealni Partner</button>
+     </a>
+  </div>   
+</div> 
+<div id="ezoic-pub-ad-placeholder-103"></div> <!-- Bottom of content -->
+<a href="https://wa.me/?text=https://lfbuyer.com/hr/" target="_blank" class="whatsapp-button">
+  📲  WhatsApp=>Pošalji Prijatelju
+</a>
+
+<script>
+  // Poetic fallback theme and messages for each zodiac sign
+  const fallbackTheme = "Zvjezdani zagrljaj";
+  const fallbackMessages = {
+    aries:      "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
+    taurus:     "Svojim postojanim korakom gradiš utjehu svijeta.",
+    gemini:     "Riječi lete poput leptira, pronalazeći svjetlost u svakom srcu.",
+    cancer:     "Tvoja su osjećanja valovi koji miluju dušu.",
+    leo:        "Sjena tvog osmijeha daruje toplinu hladnom svijetu.",
+    virgo:      "Tvoja preciznost donosi red u kaos zvijezda.",
+    libra:      "U ravnoteži pronalaziš svoju istinu.",
+    scorpio:    "Dubina tvoje strasti razbija prepreke tame.",
+    sagittarius:"Tvoja sloboda širi krila beskraju.",
+    capricorn:  "Tvrdoglava postojanost gradi planine uspjeha.",
+    aquarius:   "Tvoji snovi osvjetljavaju novi horizont.",
+    pisces:     "Magija mašte plovi oceanom mogućnosti."
+  };
+
+  async function showForecast() {
+    const sign = document.getElementById("signSelect").value;
+    const today = new Date().toISOString().split("T")[0];
+    const filePath = `${today}-horoscope.json`; // JSON in same folder
+
+    try {
+      const response = await fetch(filePath);
+      if (!response.ok) throw new Error("File not found");
+
+      const horoscopes = await response.json();
+      const entry = horoscopes[today] || {};
+      const theme = entry.theme;
+      const forecast = entry[sign];
+
+      if (forecast) {
+        document.getElementById("output").innerHTML = `
+          <h2>Tema: ${theme}</h2>
+          <p>${forecast}</p>
+        `;
+      } else {
+        // File loaded but no forecast for this sign
+        document.getElementById("output").innerHTML = `
+          <h2>Tema: ${fallbackTheme}</h2>
+          <p>${fallbackMessages[sign]}</p>
+        `;
+      }
+    } catch (error) {
+      // JSON missing or invalid
+      console.warn("Horoscope load error:", error);
+      document.getElementById("output").innerHTML = `
+        <h2>Tema: ${fallbackTheme}</h2>
+        <p>${fallbackMessages[sign]}</p>
+      `;
+    }
+  }
+</script>
+
+<script>
+  const tips = [
+    "Svaki dan je nova prilika za osmijeh.",
+    "Tvoje misli oblikuju tvoju stvarnost.",
+    "Započni dan s zahvalnošću i sve će sjati.",
+    "Tvoje snage su veće nego tvoje sumnje.",
+    "Budi razlog nečijeg osmijeha danas.",
+    "Mir dolazi iznutra — njeguj ga.",
+    "Tvoje ideje vrijede — podijeli ih.",
+    "Ne moraš biti savršen da bi bio sjajan.",
+    "Svijet treba tvoju jedinstvenost.",
+    "Hrabrost je tihi glas koji kaže: pokušaj opet."
+  ];
+
+  const tipBox = document.getElementById("tipBox");
+
+  function showRandomTip() {
+    const tip = tips[Math.floor(Math.random() * tips.length)];
+    tipBox.style.opacity = 0;
+    setTimeout(() => {
+      tipBox.textContent = tip;
+      tipBox.style.opacity = 1;
+    }, 300);
+  }
+
+  showRandomTip(); // initial tip
+  setInterval(showRandomTip, 10000); // rotate every 10 sec
+</script>
+
+ 
+<!-- 
+ Copyright(c) 2025 RIOGB j.d.o.o.
+  Sva prava pridržana.
+
+  Ova web stranica i njezin sadržaj, uključujući ali ne ograničavajući se na tekst, slike i izvorni kod, 
+  zaštićeni su autorskim pravom i ne smiju se reproducirati, distribuirati niti prenositi 
+  u bilo kojem obliku ili na bilo koji način bez prethodnog pisanog dopuštenja vlasnika autorskih prava.
+-->
+
+<footer class="site-footer">
+
+
+  <p>✨ Pokreće te tvoja kozmička znatiželja ✨</p>
+   <div id="ezoic-pub-ad-placeholder-104"></div> <!-- Footer ad -->
+  <p>&copy; <span id="current-year"></span> RIOGB j.d.o.o. Sva prava pridržana.</p>
+  <a href="https://www.lfbuyer.com/privacy-policy/" target="_blank" rel="noopener noreferrer">
+    Pravila privatnosti
+  </a>
+</footer>
+
+<script>
+  // Automatsko ažuriranje godine u podnožju
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+  
+</body>
+</html>
