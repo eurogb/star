@@ -223,7 +223,7 @@
     }
   </script>
 
-  <script>
+<script>
   const fallbackTips = [
     "Svaki dan je nova prilika za osmijeh.",
     "Tvoje misli oblikuju tvoju stvarnost.",
@@ -238,23 +238,34 @@
   ];
 
   const tipBox = document.getElementById("tipBox");
-  let tips = [...fallbackTips]; // default fallback
+  let tips = [...fallbackTips];
   let tipIndex = 0;
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
 
   async function loadTips() {
     try {
-      const res = await fetch('/api/tip/hr'); // Vercel rewrite to hide real path
+      const res = await fetch('/api/tip/hr');
       if (!res.ok) throw new Error("API tip fetch failed");
       const data = await res.json();
       if (data.motivationalTips && Array.isArray(data.motivationalTips)) {
-        tips = data.motivationalTips.map(t => t.tip);
+        tips = shuffle(data.motivationalTips.map(t => t.tip));
+      } else {
+        tips = shuffle(fallbackTips);
       }
     } catch (err) {
       console.warn("Using fallback tips:", err);
+      tips = shuffle(fallbackTips);
     }
   }
 
-  function showRandomTip() {
+  function showNextTip() {
     const tip = tips[tipIndex % tips.length];
     tipBox.style.opacity = 0;
     setTimeout(() => {
@@ -265,10 +276,11 @@
   }
 
   loadTips().then(() => {
-    showRandomTip();
-    setInterval(showRandomTip, 10000);
+    showNextTip();
+    setInterval(showNextTip, 10000);
   });
 </script>
+
 
  
 <!-- 
