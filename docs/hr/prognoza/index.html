@@ -210,8 +210,8 @@
   const today = new Date().toISOString().split("T")[0];
 
   try {
-    const res = await fetch(`/api/horoskop/${today}`); // ← Vercel rewrite
-    if (!res.ok) throw new Error("Horoskop not found");
+    const res = await fetch(`/api/horoskop/${today}`); // Vercel rewrite → astro-api
+    if (!res.ok) throw new Error(`Horoskop fetch failed: ${res.status}`);
     const data = await res.json();
     const entry = data[today] || {};
     const theme = entry.theme;
@@ -221,14 +221,15 @@
       <h2>Tema: ${forecast ? theme : fallbackTheme}</h2>
       <p>${forecast || fallbackMessages[sign]}</p>
     `;
-  } catch (e) {
-    console.warn("Load error:", e);
+  } catch (err) {
+    console.warn("⚠️ Using fallback horoskop:", err.message);
     document.getElementById("output").innerHTML = `
       <h2>Tema: ${fallbackTheme}</h2>
       <p>${fallbackMessages[sign]}</p>
     `;
   }
 }
+
 
   </script>
 
@@ -259,20 +260,23 @@
   }
 
   async function loadTips() {
-    try {
-      const res = await fetch('/api/tip/hr'); // Vercel rewrite to astro-api
-      if (!res.ok) throw new Error("API tip fetch failed");
-      const data = await res.json();
-      if (data.motivationalTips && Array.isArray(data.motivationalTips)) {
-        tips = shuffle(data.motivationalTips.map(t => t.tip));
-      } else {
-        tips = shuffle(fallbackTips);
-      }
-    } catch (err) {
-      console.warn("Using fallback tips:", err);
-      tips = shuffle(fallbackTips);
+  try {
+    const res = await fetch('/api/tip/hr'); // Vercel rewrite → astro-api
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const data = await res.json();
+
+    if (data?.motivationalTips?.length) {
+      tips = shuffle(data.motivationalTips.map(t => t.tip));
+      console.log("✅ Tips loaded from API:", tips.length);
+    } else {
+      throw new Error("Invalid tip structure");
     }
+  } catch (err) {
+    console.warn("⚠️ Using fallback tips due to error:", err.message);
+    tips = shuffle(fallbackTips);
   }
+}
+
 
   function showNextTip() {
     const tip = tips[tipIndex % tips.length];
