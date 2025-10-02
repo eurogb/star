@@ -196,31 +196,30 @@
     };
 
     async function showForecast() {
-      const sign  = document.getElementById("signSelect").value;
-      const today = new Date().toISOString().split("T")[0];
-      // ← point into the local 'dan' folder & use 'horoskop'
-      const filePath = `dan/${today}-horoskop.json`;
+  const sign = document.getElementById("signSelect").value;
+  const today = new Date().toISOString().split("T")[0];
 
-      try {
-        const res = await fetch(filePath);
-        if (!res.ok) throw new Error("JSON not found");
-        const data = await res.json();
-        const entry    = data[today] || {};
-        const theme    = entry.theme;
-        const forecast = entry[sign];
+  try {
+    const res = await fetch(`/api/horoskop/${today}`); // ← Vercel rewrite
+    if (!res.ok) throw new Error("Horoskop not found");
+    const data = await res.json();
+    const entry = data[today] || {};
+    const theme = entry.theme;
+    const forecast = entry[sign];
 
-        document.getElementById("output").innerHTML = `
-          <h2>Tema: ${forecast ? theme : fallbackTheme}</h2>
-          <p>${forecast || fallbackMessages[sign]}</p>
-        `;
-      } catch (e) {
-        console.warn("Load error:", e);
-        document.getElementById("output").innerHTML = `
-          <h2>Tema: ${fallbackTheme}</h2>
-          <p>${fallbackMessages[sign]}</p>
-        `;
-      }
-    }
+    document.getElementById("output").innerHTML = `
+      <h2>Tema: ${forecast ? theme : fallbackTheme}</h2>
+      <p>${forecast || fallbackMessages[sign]}</p>
+    `;
+  } catch (e) {
+    console.warn("Load error:", e);
+    document.getElementById("output").innerHTML = `
+      <h2>Tema: ${fallbackTheme}</h2>
+      <p>${fallbackMessages[sign]}</p>
+    `;
+  }
+}
+
   </script>
 
 <script>
@@ -251,7 +250,7 @@
 
   async function loadTips() {
     try {
-      const res = await fetch('/api/tip/hr');
+      const res = await fetch('/api/tip/hr'); // Vercel rewrite to astro-api
       if (!res.ok) throw new Error("API tip fetch failed");
       const data = await res.json();
       if (data.motivationalTips && Array.isArray(data.motivationalTips)) {
@@ -280,6 +279,7 @@
     setInterval(showNextTip, 10000);
   });
 </script>
+
 
 
  
