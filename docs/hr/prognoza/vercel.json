@@ -1,9 +1,9 @@
 {
   "rewrites": [
     {
-      "source": "/api/tip/hr",
-      "destination": "https://astro-api.vercel.app/api/tip.hr"
-    },
+  "source": "/api/tip/hr",
+  "destination": "https://astro-api.vercel.app/api/tipHr"
+}
     {
       "source": "/api/horoskop/:date",
       "destination": "https://astro-api.vercel.app/api/horoskop?date=:date"
