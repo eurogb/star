@@ -231,6 +231,7 @@
 }
 
 
+
   </script>
 
 <script>
@@ -259,23 +260,25 @@
     return array;
   }
 
-  async function loadTips() {
+ async function loadTips() {
   try {
-    const res = await fetch('/api/tip/hr'); // Vercel rewrite → astro-api
+    const res = await fetch('/api/tip/hr');
     if (!res.ok) throw new Error(`API error: ${res.status}`);
-    const data = await res.json();
+    const { tip: apiTip } = await res.json();
 
-    if (data?.motivationalTips?.length) {
-      tips = shuffle(data.motivationalTips.map(t => t.tip));
-      console.log("✅ Tips loaded from API:", tips.length);
+    if (typeof apiTip === 'string') {
+      // Wrap the single tip in an array so showNextTip() can cycle through it
+      tips = [apiTip];
+      console.log('✅ Tips loaded from API:', tips);
     } else {
-      throw new Error("Invalid tip structure");
+      throw new Error('Invalid tip structure');
     }
   } catch (err) {
-    console.warn("⚠️ Using fallback tips due to error:", err.message);
+    console.warn('⚠️ Using fallback tips due to error:', err.message);
     tips = shuffle(fallbackTips);
   }
 }
+
 
 
   function showNextTip() {
