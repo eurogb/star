@@ -260,14 +260,13 @@
     return array;
   }
 
- async function loadTips() {
+async function loadTips() {
   try {
-    const res = await fetch('/api/tip/hr');
+    const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
     if (!res.ok) throw new Error(`API error: ${res.status}`);
     const { tip: apiTip } = await res.json();
 
     if (typeof apiTip === 'string') {
-      // Wrap the single tip in an array so showNextTip() can cycle through it
       tips = [apiTip];
       console.log('✅ Tips loaded from API:', tips);
     } else {
@@ -280,6 +279,8 @@
 }
 
 
+
+    
 
   function showNextTip() {
     const tip = tips[tipIndex % tips.length];
