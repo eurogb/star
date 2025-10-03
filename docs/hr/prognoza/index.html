@@ -188,53 +188,62 @@
 </a>
 
 <script>
-    const fallbackTheme = "Zvjezdani zagrljaj";
-    const fallbackMessages = {
-  aries:       "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
-  taurus:      "Svojim postojanim korakom gradiš utjehu svijeta.",
-  gemini:      "Riječi lete poput leptira, pronalazeći svjetlost u svakom srcu.",
-  cancer:      "Tvoja su osjećanja valovi koji miluju dušu.",
-  leo:         "Sjena tvog osmijeha daruje toplinu hladnom svijetu.",
-  virgo:       "Tvoja preciznost donosi red u kaos zvijezda.",
-  libra:       "U ravnoteži pronalaziš svoju istinu.",
-  scorpio:     "Dubina tvoje strasti razbija prepreke tame.",
-  sagittarius: "Tvoja sloboda širi krila beskraju.",
-  capricorn:   "Tvrdoglava postojanost gradi planine uspjeha.",
-  aquarius:    "Tvoji snovi osvjetljavaju novi horizont.",
-  pisces:      "Magija mašte plovi oceanom mogućnosti."
-};
+  // Base URL for the Astro‐API service
+  const ASTRO_API_BASE = window.location.hostname.includes('localhost')
+    ? 'http://localhost:3000'
+    : 'https://your-astro-api.vercel.app';
 
+  // ————————————————
+  // Horoskop (Forecast) Logic
+  // ————————————————
+  const fallbackTheme = "Zvjezdani zagrljaj";
+  const fallbackMessages = {
+    aries:       "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
+    taurus:      "Svojim postojanim korakom gradiš utjehu svijeta.",
+    gemini:      "Riječi lete poput leptira, pronalazeći svjetlost u svakom srcu.",
+    cancer:      "Tvoja su osjećanja valovi koji miluju dušu.",
+    leo:         "Sjena tvog osmijeha daruje toplinu hladnom svijetu.",
+    virgo:       "Tvoja preciznost donosi red u kaos zvijezda.",
+    libra:       "U ravnoteži pronalaziš svoju istinu.",
+    scorpio:     "Dubina tvoje strasti razbija prepreke tame.",
+    sagittarius: "Tvoja sloboda širi krila beskraju.",
+    capricorn:   "Tvrdoglava postojanost gradi planine uspjeha.",
+    aquarius:    "Tvoji snovi osvjetljavaju novi horizont.",
+    pisces:      "Magija mašte plovi oceanom mogućnosti."
+  };
 
-    async function showForecast() {
-  const sign = document.getElementById("signSelect").value;
-  const today = new Date().toISOString().split("T")[0];
+  async function showForecast() {
+    const sign = document.getElementById("signSelect").value;
+    const today = new Date().toISOString().split("T")[0];
 
-  try {
-    const res = await fetch(`/api/horoskop/${today}`); // Vercel rewrite → astro-api
-    if (!res.ok) throw new Error(`Horoskop fetch failed: ${res.status}`);
-    const data = await res.json();
-    const entry = data[today] || {};
-    const theme = entry.theme;
-    const forecast = entry[sign];
+    try {
+      const res = await fetch(`${ASTRO_API_BASE}/api/horoskop/${today}`);
+      if (!res.ok) throw new Error(`Horoskop fetch failed: ${res.status}`);
+      const data = await res.json();
+      const entry = data[today] || {};
+      const theme = entry.theme || fallbackTheme;
+      const forecast = entry[sign] || fallbackMessages[sign];
 
-    document.getElementById("output").innerHTML = `
-      <h2>Tema: ${forecast ? theme : fallbackTheme}</h2>
-      <p>${forecast || fallbackMessages[sign]}</p>
-    `;
-  } catch (err) {
-    console.warn("⚠️ Using fallback horoskop:", err.message);
-    document.getElementById("output").innerHTML = `
-      <h2>Tema: ${fallbackTheme}</h2>
-      <p>${fallbackMessages[sign]}</p>
-    `;
+      document.getElementById("output").innerHTML = `
+        <h2>Tema: ${theme}</h2>
+        <p>${forecast}</p>
+      `;
+    } catch (err) {
+      console.warn("⚠️ Using fallback horoskop:", err.message);
+      document.getElementById("output").innerHTML = `
+        <h2>Tema: ${fallbackTheme}</h2>
+        <p>${fallbackMessages[document.getElementById("signSelect").value]}</p>
+      `;
+    }
   }
-}
+
+  // optionally wire showForecast() to a button or on-change:
+  // document.getElementById("signSelect").addEventListener("change", showForecast);
 
 
-
-  </script>
-
-<script>
+  // ————————————————
+  // Motivational Tips Logic
+  // ————————————————
   const fallbackTips = [
     "Svaki dan je nova prilika za osmijeh.",
     "Tvoje misli oblikuju tvoju stvarnost.",
@@ -260,27 +269,23 @@
     return array;
   }
 
-async function loadTips() {
-  try {
-    const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
-    const { tip: apiTip } = await res.json();
+  async function loadTips() {
+    try {
+      const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      const { tip: apiTip } = await res.json();
 
-    if (typeof apiTip === 'string') {
-      tips = [apiTip];
-      console.log('✅ Tips loaded from API:', tips);
-    } else {
-      throw new Error('Invalid tip structure');
+      if (typeof apiTip === "string") {
+        tips = [apiTip];
+        console.log("✅ Tips loaded from API:", tips);
+      } else {
+        throw new Error("Invalid tip structure");
+      }
+    } catch (err) {
+      console.warn("⚠️ Using fallback tips due to error:", err.message);
+      tips = shuffle(fallbackTips);
     }
-  } catch (err) {
-    console.warn('⚠️ Using fallback tips due to error:', err.message);
-    tips = shuffle(fallbackTips);
   }
-}
-
-
-
-    
 
   function showNextTip() {
     const tip = tips[tipIndex % tips.length];
@@ -292,9 +297,15 @@ async function loadTips() {
     }, 300);
   }
 
-  loadTips().then(() => {
-    showNextTip();
-    setInterval(showNextTip, 10000);
+  // ————————————————
+  // Initialization
+  // ————————————————
+  document.addEventListener("DOMContentLoaded", () => {
+    showForecast();          // load the horoscope once on page load
+    loadTips().then(() => {  // fetch a tip, then start the cycle
+      showNextTip();
+      setInterval(showNextTip, 10000);
+    });
   });
 </script>
 
