@@ -269,23 +269,24 @@
     return array;
   }
 
-  async function loadTips() {
-    try {
-      const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
-      const { tip: apiTip } = await res.json();
+ async function loadTips() {
+  try {
+    const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    const { tip: apiTip } = await res.json();
 
-      if (typeof apiTip === "string") {
-        tips = [apiTip];
-        console.log("✅ Tips loaded from API:", tips);
-      } else {
-        throw new Error("Invalid tip structure");
-      }
-    } catch (err) {
-      console.warn("⚠️ Using fallback tips due to error:", err.message);
-      tips = shuffle(fallbackTips);
+    if (typeof apiTip === "string") {
+      tips = [apiTip];
+      console.log("✅ Tips loaded from API:", tips);
+    } else {
+      throw new Error("Invalid tip structure");
     }
+  } catch (err) {
+    console.warn("⚠️ Using fallback tips due to error:", err.message);
+    tips = shuffle(fallbackTips);
   }
+}
+
 
   function showNextTip() {
     const tip = tips[tipIndex % tips.length];
