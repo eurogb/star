@@ -191,7 +191,7 @@
   // Base URL for the Astro‐API service
   const ASTRO_API_BASE = window.location.hostname.includes('localhost')
     ? 'http://localhost:3000'
-    : 'https://star-nu-blond.vercel.app/api/tip/hr  ';
+    : 'https://star-nu-blond.vercel.app';  // ← change to your actual Astro-API Vercel URL
 
   // ————————————————
   // Horoskop (Forecast) Logic
@@ -237,10 +237,6 @@
     }
   }
 
-  // optionally wire showForecast() to a button or on-change:
-  // document.getElementById("signSelect").addEventListener("change", showForecast);
-
-
   // ————————————————
   // Motivational Tips Logic
   // ————————————————
@@ -269,24 +265,23 @@
     return array;
   }
 
- async function loadTips() {
-  try {
-    const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
-    const { tip: apiTip } = await res.json();
+  async function loadTips() {
+    try {
+      const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      const { tip: apiTip } = await res.json();
 
-    if (typeof apiTip === "string") {
-      tips = [apiTip];
-      console.log("✅ Tips loaded from API:", tips);
-    } else {
-      throw new Error("Invalid tip structure");
+      if (typeof apiTip === "string") {
+        tips = [apiTip];
+        console.log("✅ Tips loaded from API:", tips);
+      } else {
+        throw new Error("Invalid tip structure");
+      }
+    } catch (err) {
+      console.warn("⚠️ Using fallback tips due to error:", err.message);
+      tips = shuffle(fallbackTips);
     }
-  } catch (err) {
-    console.warn("⚠️ Using fallback tips due to error:", err.message);
-    tips = shuffle(fallbackTips);
   }
-}
-
 
   function showNextTip() {
     const tip = tips[tipIndex % tips.length];
@@ -302,13 +297,14 @@
   // Initialization
   // ————————————————
   document.addEventListener("DOMContentLoaded", () => {
-    showForecast();          // load the horoscope once on page load
-    loadTips().then(() => {  // fetch a tip, then start the cycle
+    showForecast();
+    loadTips().then(() => {
       showNextTip();
       setInterval(showNextTip, 10000);
     });
   });
 </script>
+
 
 
 
