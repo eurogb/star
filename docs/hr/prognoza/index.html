@@ -187,123 +187,53 @@
   📲  WhatsApp => Pošalji Prijatelju
 </a>
 
-<script>
-  // Base URL for the Astro‐API service
-  const ASTRO_API_BASE = window.location.hostname.includes('localhost')
-    ? 'http://localhost:3000'
-    : 'https://star-nu-blond.vercel.app';  // ← change to your actual Astro-API Vercel URL
+   <script>
++    // ← Add this at the very top of the script block
++    const ASTRO_API_BASE = window.location.hostname.includes('localhost')
++      ? 'http://localhost:3000'
++      : '';
 
-  // ————————————————
-  // Horoskop (Forecast) Logic
-  // ————————————————
-  const fallbackTheme = "Zvjezdani zagrljaj";
-  const fallbackMessages = {
-    aries:       "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
-    taurus:      "Svojim postojanim korakom gradiš utjehu svijeta.",
-    gemini:      "Riječi lete poput leptira, pronalazeći svjetlost u svakom srcu.",
-    cancer:      "Tvoja su osjećanja valovi koji miluju dušu.",
-    leo:         "Sjena tvog osmijeha daruje toplinu hladnom svijetu.",
-    virgo:       "Tvoja preciznost donosi red u kaos zvijezda.",
-    libra:       "U ravnoteži pronalaziš svoju istinu.",
-    scorpio:     "Dubina tvoje strasti razbija prepreke tame.",
-    sagittarius: "Tvoja sloboda širi krila beskraju.",
-    capricorn:   "Tvrdoglava postojanost gradi planine uspjeha.",
-    aquarius:    "Tvoji snovi osvjetljavaju novi horizont.",
-    pisces:      "Magija mašte plovi oceanom mogućnosti."
-  };
+     const fallbackTips = [ /* … */ ];
+     const tipBox = document.getElementById("tipBox");
+     let tips = [...fallbackTips];
+     let tipIndex = 0;
 
-  async function showForecast() {
-    const sign = document.getElementById("signSelect").value;
-    const today = new Date().toISOString().split("T")[0];
+     function shuffle(array) { /* … */ }
 
-    try {
-      const res = await fetch(`${ASTRO_API_BASE}/api/horoskop/${today}`);
-      if (!res.ok) throw new Error(`Horoskop fetch failed: ${res.status}`);
-      const data = await res.json();
-      const entry = data[today] || {};
-      const theme = entry.theme || fallbackTheme;
-      const forecast = entry[sign] || fallbackMessages[sign];
+     async function loadTips() {
+       try {
+-        // OLD (relative URL always 404 on star-nu-blond)
+-        const res = await fetch('/api/tip/hr');
++        // NEW – points at your astro-api service
++        const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
+         if (!res.ok) throw new Error(`API error: ${res.status}`);
 
-      document.getElementById("output").innerHTML = `
-        <h2>Tema: ${theme}</h2>
-        <p>${forecast}</p>
-      `;
-    } catch (err) {
-      console.warn("⚠️ Using fallback horoskop:", err.message);
-      document.getElementById("output").innerHTML = `
-        <h2>Tema: ${fallbackTheme}</h2>
-        <p>${fallbackMessages[document.getElementById("signSelect").value]}</p>
-      `;
-    }
-  }
+         const { tip: apiTip } = await res.json();
+         if (typeof apiTip === "string") {
+           tips = [apiTip];
+           console.log("✅ Tips loaded from API:", tips);
+         } else {
+           throw new Error("Invalid tip structure");
+         }
+       } catch (err) {
+-        // line 275
+         console.warn("⚠️ Using fallback tips due to error:", err.message);
+         tips = shuffle(fallbackTips);
+       }
+     }
 
-  // ————————————————
-  // Motivational Tips Logic
-  // ————————————————
-  const fallbackTips = [
-    "Svaki dan je nova prilika za osmijeh.",
-    "Tvoje misli oblikuju tvoju stvarnost.",
-    "Započni dan s zahvalnošću i sve će sjati.",
-    "Tvoje snage su veće nego tvoje sumnje.",
-    "Budi razlog nečijeg osmijeha danas.",
-    "Mir dolazi iznutra — njeguj ga.",
-    "Tvoje ideje vrijede — podijeli ih.",
-    "Ne moraš biti savršen da bi bio sjajan.",
-    "Svijet treba tvoju jedinstvenost.",
-    "Hrabrost je tihi glas koji kaže: pokušaj opet."
-  ];
+     function showNextTip() {
+       const tip = tips[tipIndex % tips.length];  // line 291
+       /* … */
+     }
 
-  const tipBox = document.getElementById("tipBox");
-  let tips = [...fallbackTips];
-  let tipIndex = 0;
-
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  async function loadTips() {
-    try {
-      const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
-      const { tip: apiTip } = await res.json();
-
-      if (typeof apiTip === "string") {
-        tips = [apiTip];
-        console.log("✅ Tips loaded from API:", tips);
-      } else {
-        throw new Error("Invalid tip structure");
-      }
-    } catch (err) {
-      console.warn("⚠️ Using fallback tips due to error:", err.message);
-      tips = shuffle(fallbackTips);
-    }
-  }
-
-  function showNextTip() {
-    const tip = tips[tipIndex % tips.length];
-    tipBox.style.opacity = 0;
-    setTimeout(() => {
-      tipBox.textContent = tip;
-      tipBox.style.opacity = 1;
-      tipIndex++;
-    }, 300);
-  }
-
-  // ————————————————
-  // Initialization
-  // ————————————————
-  document.addEventListener("DOMContentLoaded", () => {
-    showForecast();
-    loadTips().then(() => {
-      showNextTip();
-      setInterval(showNextTip, 10000);
-    });
-  });
-</script>
+     document.addEventListener("DOMContentLoaded", () => {
+       loadTips().then(() => {
+         showNextTip();
+         setInterval(showNextTip, 10000);
+       });
+     });
+   </script>
 
 
 
