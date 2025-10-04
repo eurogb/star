@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/tip/:path*",
-      "destination": "https://astro-api-star-nu-blond.vercel.app/api/tip/:path*"
+      "destination": "https://astro-api-omega.vercel.app/api/tip/:path*"
     },
     {
       "source": "/api/horoskop/:path*",
-      "destination": "https://astro-api-star-nu-blond.vercel.app/api/horoskop/:path*"
+      "destination": "https://astro-api-omega.vercel.app/api/horoskop/:path*"
     }
   ]
 }
