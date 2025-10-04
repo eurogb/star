@@ -1,0 +1,4 @@
+// This ensures only your index.html and static assets are deployed,
+// while data comes only from the backend API.
+docs/hr/prognoza/dan/
+docs/hr/prognoza/tip/
