@@ -187,74 +187,72 @@
   📲  WhatsApp => Pošalji Prijatelju
 </a>
 
-  <script>
 <script>
-  // Base URL for the Astro-API service
   const ASTRO_API_BASE = window.location.hostname.includes('localhost')
     ? 'http://localhost:3000'
     : 'https://star-nu-blond.vercel.app';
 
-  // ————————————————
-  // Motivational Tips Logic
-  // ————————————————
-  const fallbackTips = [
-    "Svaki dan je nova prilika za osmijeh.",
-    "Tvoje misli oblikuju tvoju stvarnost.",
-    "Započni dan s zahvalnošću i sve će sjati.",
-    "Tvoje snage su veće nego tvoje sumnje.",
-    "Budi razlog nečijeg osmijeha danas.",
-    "Mir dolazi iznutra — njeguj ga.",
-    "Tvoje ideje vrijede — podijeli ih.",
-    "Ne moraš biti savršen da bi bio sjajan.",
-    "Svijet treba tvoju jedinstvenost.",
-    "Hrabrost je tihi glas koji kaže: pokušaj opet."
-  ];
+  // — Forecast logic —
+  const fallbackTheme = "Zvjezdani zagrljaj";
+  const fallbackMessages = { /* your messages */ };
 
-  const tipBox = document.getElementById("tipBox");
-  let tips = [...fallbackTips];
-  let tipIndex = 0;
-
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
-  async function loadTips() {
+  async function showForecast() {
+    const sign = document.getElementById("signSelect").value;
+    const today = new Date().toISOString().split("T")[0];
     try {
-      const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
-      const { tip: apiTip } = await res.json();
-
-      if (typeof apiTip === "string") {
-        tips = [apiTip];
-        console.log("✅ Tips loaded from API:", tips);
-      } else {
-        throw new Error("Invalid tip structure");
-      }
-    } catch (err) {
-      console.warn("⚠️ Using fallback tips due to error:", err.message);
-      tips = shuffle(fallbackTips);
+      const res = await fetch(`${ASTRO_API_BASE}/api/horoskop/${today}`);
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      const entry = data[today] || {};
+      const theme = entry.theme || fallbackTheme;
+      const forecast = entry[sign] || fallbackMessages[sign];
+      document.getElementById("output").innerHTML = `
+        <h2>Tema: ${theme}</h2>
+        <p>${forecast}</p>`;
+    } catch {
+      document.getElementById("output").innerHTML = `
+        <h2>Tema: ${fallbackTheme}</h2>
+        <p>${fallbackMessages[sign]}</p>`;
     }
   }
 
-  function showNextTip() {
-    const tip = tips[tipIndex % tips.length];
-    tipBox.style.opacity = 0;
-    setTimeout(() => {
-      tipBox.textContent = tip;
-      tipBox.style.opacity = 1;
-      tipIndex++;
-    }, 300);
-  }
+  // wire the button after DOM loads
+  document.addEventListener('DOMContentLoaded',()=>{
+    document
+      .getElementById('forecastBtn')
+      .addEventListener('click', showForecast);
 
-  // Initialize tips on page load
-  document.addEventListener("DOMContentLoaded", () => {
-    loadTips().then(() => {
+    // — Tip logic —
+    const fallbackTips = [ /* … */ ];
+    let tips = [...fallbackTips], tipIndex=0;
+    const tipBox = document.getElementById("tipBox");
+
+    function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+    async function loadTips(){
+      try {
+        const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
+        if(!res.ok) throw new Error(res.status);
+        const { tip } = await res.json();
+        tips = [tip];
+      } catch{
+        tips = shuffle(fallbackTips);
+      }
+    }
+
+    function showNextTip(){
+      const t = tips[tipIndex % tips.length];
+      tipBox.style.opacity=0;
+      setTimeout(()=>{
+        tipBox.textContent = t;
+        tipBox.style.opacity=1;
+        tipIndex++;
+      },300);
+    }
+
+    loadTips().then(()=>{
       showNextTip();
-      setInterval(showNextTip, 10000);
+      setInterval(showNextTip,10000);
     });
   });
 </script>
