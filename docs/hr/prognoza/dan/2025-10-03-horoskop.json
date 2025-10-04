@@ -1,16 +1,19 @@
 {
-  "theme": "Promjena",
-  "aries": "Ovan, danas osjećaš snažnu potrebu za novim početkom...",
-  "taurus": "Bik, promjena se možda ne uklapa u tvoj osjećaj sigurnosti...",
-  "gemini": "Blizanci, tvoj nemirni duh traži promjenu...",
-  "cancer": "Rak, promjene u tvom životu sada dolaze kroz emocije...",
-  "leo": "Lav, danas promjene donose priliku da pokažeš snagu...",
-  "virgo": "Djevica, promjena te danas potiče da otpustiš potrebu...",
-  "libra": "Vaga, promjena ti danas donosi mogućnost da uspostaviš novi sklad...",
-  "scorpio": "Škorpione, promjena ti dolazi duboko i transformira tvoje srce...",
-  "sagittarius": "Strijelče, promjena danas budi tvoju žeđ za iskustvom...",
-  "capricorn": "Jarče, iako voliš stabilnost i planove, promjena te danas uči...",
-  "aquarius": "Vodenjače, promjena je tvoj saveznik i danas to osjećaš snažno...",
-  "pisces": "Ribe, promjena ti danas dolazi kroz intuiciju i snove..."
+  "2025-10-03": {
+    "theme": "Test 1 Zvjezdani zagrljaj",
+    "aries": "Kad prvi zraci sunca dotaknu tvoj put, hrabrost će biti tvoj štit.",
+    "taurus": "Svojim postojanim korakom gradiš utjehu svijeta.",
+    "gemini": "Riječi lete poput leptira, pronalazeći svjetlost u svakom srcu.",
+    "cancer": "Tvoja su osjećanja valovi koji miluju dušu.",
+    "leo": "Sjena tvog osmijeha daruje toplinu hladnom svijetu.",
+    "virgo": "Tvoja preciznost donosi red u kaos zvijezda.",
+    "libra": "U ravnoteži pronalaziš svoju istinu.",
+    "scorpio": "Dubina tvoje strasti razbija prepreke tame.",
+    "sagittarius": "Tvoja sloboda širi krila beskraju.",
+    "capricorn": "Tvrdoglava postojanost gradi planine uspjeha.",
+    "aquarius": "Tvoji snovi osvjetljavaju novi horizont.",
+    "pisces": "Magija mašte plovi oceanom mogućnosti."
+  }
 }
+
 
