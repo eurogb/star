@@ -188,8 +188,10 @@
 </a>
 
   <script>
-  // Base URL for the Astro‐API service
+<script>
+  // Base URL for the Astro-API service
   const ASTRO_API_BASE = window.location.hostname.includes('localhost')
+    ? 'http://localhost:3000'
     : 'https://star-nu-blond.vercel.app';
 
   // ————————————————
