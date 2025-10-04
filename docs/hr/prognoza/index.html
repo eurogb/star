@@ -187,53 +187,77 @@
   📲  WhatsApp => Pošalji Prijatelju
 </a>
 
-   <script>
-+    // ← Add this at the very top of the script block
-+    const ASTRO_API_BASE = window.location.hostname.includes('localhost')
-+      ? 'http://localhost:3000'
-+      : '';
+  <script>
+  // Base URL for the Astro‐API service
+  const ASTRO_API_BASE = window.location.hostname.includes('localhost')
+    ? 'http://localhost:3000'
+    : 'https://<your-astro-api>.vercel.app';
 
-     const fallbackTips = [ /* … */ ];
-     const tipBox = document.getElementById("tipBox");
-     let tips = [...fallbackTips];
-     let tipIndex = 0;
+  // ————————————————
+  // Motivational Tips Logic
+  // ————————————————
+  const fallbackTips = [
+    "Svaki dan je nova prilika za osmijeh.",
+    "Tvoje misli oblikuju tvoju stvarnost.",
+    "Započni dan s zahvalnošću i sve će sjati.",
+    "Tvoje snage su veće nego tvoje sumnje.",
+    "Budi razlog nečijeg osmijeha danas.",
+    "Mir dolazi iznutra — njeguj ga.",
+    "Tvoje ideje vrijede — podijeli ih.",
+    "Ne moraš biti savršen da bi bio sjajan.",
+    "Svijet treba tvoju jedinstvenost.",
+    "Hrabrost je tihi glas koji kaže: pokušaj opet."
+  ];
 
-     function shuffle(array) { /* … */ }
+  const tipBox = document.getElementById("tipBox");
+  let tips = [...fallbackTips];
+  let tipIndex = 0;
 
-     async function loadTips() {
-       try {
--        // OLD (relative URL always 404 on star-nu-blond)
--        const res = await fetch('/api/tip/hr');
-+        // NEW – points at your astro-api service
-+        const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
-         if (!res.ok) throw new Error(`API error: ${res.status}`);
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
 
-         const { tip: apiTip } = await res.json();
-         if (typeof apiTip === "string") {
-           tips = [apiTip];
-           console.log("✅ Tips loaded from API:", tips);
-         } else {
-           throw new Error("Invalid tip structure");
-         }
-       } catch (err) {
--        // line 275
-         console.warn("⚠️ Using fallback tips due to error:", err.message);
-         tips = shuffle(fallbackTips);
-       }
-     }
+  async function loadTips() {
+    try {
+      const res = await fetch(`${ASTRO_API_BASE}/api/tip/hr`);
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      const { tip: apiTip } = await res.json();
 
-     function showNextTip() {
-       const tip = tips[tipIndex % tips.length];  // line 291
-       /* … */
-     }
+      if (typeof apiTip === "string") {
+        tips = [apiTip];
+        console.log("✅ Tips loaded from API:", tips);
+      } else {
+        throw new Error("Invalid tip structure");
+      }
+    } catch (err) {
+      console.warn("⚠️ Using fallback tips due to error:", err.message);
+      tips = shuffle(fallbackTips);
+    }
+  }
 
-     document.addEventListener("DOMContentLoaded", () => {
-       loadTips().then(() => {
-         showNextTip();
-         setInterval(showNextTip, 10000);
-       });
-     });
-   </script>
+  function showNextTip() {
+    const tip = tips[tipIndex % tips.length];
+    tipBox.style.opacity = 0;
+    setTimeout(() => {
+      tipBox.textContent = tip;
+      tipBox.style.opacity = 1;
+      tipIndex++;
+    }, 300);
+  }
+
+  // Initialize tips on page load
+  document.addEventListener("DOMContentLoaded", () => {
+    loadTips().then(() => {
+      showNextTip();
+      setInterval(showNextTip, 10000);
+    });
+  });
+</script>
+
 
 
 
